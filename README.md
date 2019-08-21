@@ -19,6 +19,8 @@ ember-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 ## Transforms
 
 <!--TRANSFORMS_START-->
+* [modify-import](transforms/modify-import/README.md)
+* [remove-features](transforms/remove-features/README.md)
 <!--TRANSFORMS_END-->
 
 ## Contributing
