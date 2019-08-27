@@ -7,14 +7,19 @@ module.exports = [{
       'convertMirageToModel',
       'removeFeatures',
       'removeAbilities',
-      'spyFlashMessage'
+      'spyFlashMessage',
+      'setupSinonSanbox',
+      'setSinonContext',
+      'getSinonContext'
     ]
   },
   {
     importDeclaration: 'freshdesk/tests/helpers/integration-test-helpers',
     importSpecifiers: [
       'setupCurrentUser',
-      'setupCurrentAccount'
+      'setupCurrentAccount',
+      'setupTranslations',
+      'setupRenderingWithMirage'
     ]
   }
 ];
