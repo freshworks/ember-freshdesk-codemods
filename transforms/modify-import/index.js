@@ -11,22 +11,25 @@ module.exports = function transformer(file, api) {
   const newImportPath = '@freshdesk/test-helpers';
   const lineTerminator = source.indexOf('\r\n') > -1 ? '\r\n' : '\n';
 
-  mapper.forEach((map) => {
-    map.importSpecifiers.forEach(
+  mapper.forEach((map) =>
+    map.importSpecifiers.sort().forEach(
       (importSpecifiers) => transformImport(
         root,
         importSpecifiers,
         map.importDeclaration
-      ));
-  });
+      )
+    )
+  );
 
   cleanupBlankImports(root);
 
-  source = beautifyImports(root.toSource({
-    quote: 'single',
-    lineTerminator,
-    trailingComma: true
-  }));
+  source = beautifyImports(
+    root.toSource({
+      quote: 'single',
+      lineTerminator,
+      trailingComma: false
+    })
+  );
 
   return source;
 

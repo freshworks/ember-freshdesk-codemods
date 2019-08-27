@@ -1,7 +1,12 @@
 import { describe, it } from 'mocha';
 import {
-  setupCurrentAccount,
-  setupCurrentUser
+  addAbilities,
+  addFeatures,
+  addLaunched,
+  convertMirageToModel,
+  removeAbilities,
+  removeFeatures,
+  spyFlashMessage,
 } from '@freshdesk/test-helpers';
 
 describe('Some test', function() {

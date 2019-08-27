@@ -1,9 +1,8 @@
 import { describe } from 'mocha';
 import {
-  spyFlashMessages,
-  addFeatures,
-  addLaunched,
-  addAbilities
+  spyFlashMessage,
+  addAbilities,
+  addFeatures
 } from '@freshdesk/test-helpers';
 
 describe('Some test', function () {

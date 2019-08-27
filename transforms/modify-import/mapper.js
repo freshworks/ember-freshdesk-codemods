@@ -3,7 +3,11 @@ module.exports = [{
     importSpecifiers: [
       'addFeatures',
       'addLaunched',
-      'addAbilities'
+      'addAbilities',
+      'convertMirageToModel',
+      'removeFeatures',
+      'removeAbilities',
+      'spyFlashMessage'
     ]
   },
   {
