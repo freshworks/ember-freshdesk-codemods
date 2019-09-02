@@ -8,9 +8,10 @@ module.exports = [{
       'removeFeatures',
       'removeAbilities',
       'spyFlashMessage',
-      'setupSinonSanbox',
+      'setupSinonSandbox',
       'setSinonContext',
-      'getSinonContext'
+      'getSinonContext',
+      'modifyFeatures'
     ]
   },
   {
