@@ -15,19 +15,27 @@ ember-codemods modify-import path/of/files/ or/some**/*glob.js
 ## Input / Output
 
 <!--FIXTURES_TOC_START-->
-* [basic](#basic)
+* [basic-imports](#basic-imports)
 * [existing-import](#existing-import)
 * [integration-helpers](#integration-helpers)
 <!--FIXTURES_TOC_END-->
 
 <!--FIXTURES_CONTENT_START-->
 ---
-<a id="basic">**basic**</a>
+<a id="basic-imports">**basic-imports**</a>
 
-**Input** (<small>[basic.input.js](transforms/modify-import/__testfixtures__/basic.input.js)</small>):
+**Input** (<small>[basic-imports.input.js](transforms/modify-import/__testfixtures__/basic-imports.input.js)</small>):
 ```js
 import { describe, it } from 'mocha';
-import { addFeatures, addLaunched, addAbilities } from 'freshdesk/tests/helpers/util-test-helpers';
+import {
+  addFeatures,
+  addLaunched,
+  addAbilities,
+  removeFeatures,
+  removeAbilities,
+  convertMirageToModel,
+  spyFlashMessage
+} from 'freshdesk/tests/helpers/util-test-helpers';
 
 describe('Some test', function() {
   it('Some test', function() {
@@ -37,13 +45,17 @@ describe('Some test', function() {
 
 ```
 
-**Output** (<small>[basic.output.js](transforms/modify-import/__testfixtures__/basic.output.js)</small>):
+**Output** (<small>[basic-imports.output.js](transforms/modify-import/__testfixtures__/basic-imports.output.js)</small>):
 ```js
 import { describe, it } from 'mocha';
 import {
+  addAbilities,
   addFeatures,
   addLaunched,
-  addAbilities
+  convertMirageToModel,
+  removeAbilities,
+  removeFeatures,
+  spyFlashMessage,
 } from '@freshdesk/test-helpers';
 
 describe('Some test', function() {
@@ -59,9 +71,8 @@ describe('Some test', function() {
 **Input** (<small>[existing-import.input.js](transforms/modify-import/__testfixtures__/existing-import.input.js)</small>):
 ```js
 import { describe } from 'mocha';
-import { addLaunched,
-  addAbilities, addFeatures } from 'freshdesk/tests/helpers/util-test-helpers';
-import { spyFlashMessages } from '@freshdesk/test-helpers';
+import { addAbilities, addFeatures } from 'freshdesk/tests/helpers/util-test-helpers';
+import { spyFlashMessage } from '@freshdesk/test-helpers';
 
 describe('Some test', function () {
   it('Some test', function () {
@@ -75,10 +86,9 @@ describe('Some test', function () {
 ```js
 import { describe } from 'mocha';
 import {
-  spyFlashMessages,
-  addFeatures,
-  addLaunched,
-  addAbilities
+  spyFlashMessage,
+  addAbilities,
+  addFeatures
 } from '@freshdesk/test-helpers';
 
 describe('Some test', function () {
@@ -111,8 +121,8 @@ describe('Some test', function() {
 ```js
 import { describe, it } from 'mocha';
 import {
-  setupCurrentUser,
-  setupCurrentAccount
+  setupCurrentAccount,
+  setupCurrentUser
 } from '@freshdesk/test-helpers';
 
 describe('Some test', function() {
