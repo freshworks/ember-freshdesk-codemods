@@ -1,10 +1,8 @@
 import { describe, it } from 'mocha';
-import { setupRenderingTest } from 'ember-mocha';
-import { setupTranslations } from '@freshdesk/test-helpers';
+import { setupRenderingWithMirage } from 'ember-mocha';
 
 describe('Some test', function() {
-  let hooks = setupRenderingTest();
-  setupTranslations(hooks);
+  setupRenderingWithMirage();
 
   it('Some test', function() {
     // ...

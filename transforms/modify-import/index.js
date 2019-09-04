@@ -42,7 +42,6 @@ module.exports = function transformer(file, api) {
     }).filter((path) => path.parent.value.source.value === oldImportPath);
   };
 
-  // Create an import declaration for the new path is present else create a new declaration
   function findImportDeclaration(root, declarationName) {
     return root.find(j.ImportDeclaration, {
       source: {
