@@ -20,9 +20,12 @@ module('Integration | Component', function(hooks) {
     assert.equal(false, false);
     assert.equal(false, false, 'expect with message');
 
-    // Negative cases with variance
-    assert.notOk(result);
-    assert.notOk(result, 'With Message');
+    // Empty checks
+    assert.notOk('', 'empty string');
+    assert.notOk(Array.from([]).length, 'empty array');
+    assert.notOk(Object.keys({}).length, 'empty object');
+    assert.ok(Array.from([1, 2]).length, 'non empty array');
+    assert.ok(Object.keys({"name": "freshworks"}).length, 'non empty object');
 
     // Variations in equal assertion
     assert.equal(true, true);

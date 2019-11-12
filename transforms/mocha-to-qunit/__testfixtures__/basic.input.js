@@ -18,9 +18,12 @@ describe('Integration | Component', function() {
     expect(false).to.be.false;
     expect(false, 'expect with message').to.be.false;
 
-    // Negative cases with variance
-    expect(result).to.be.empty;
-    expect(result, 'With Message').to.be.empty;
+    // Empty checks
+    expect('', 'empty string').to.be.empty;
+    expect([], 'empty array').to.be.empty;
+    expect({}, 'empty object').to.be.empty;
+    expect([1, 2], 'non empty array').to.not.be.empty;
+    expect({"name": "freshworks"}, 'non empty object').to.not.be.empty;
 
     // Variations in equal assertion
     expect(true).to.equal(true);

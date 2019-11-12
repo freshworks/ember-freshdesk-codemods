@@ -53,14 +53,43 @@ module.exports = [{
   }
 }, {
   name: 'expected-empty',
-  // expect(result).to.be.empty;
+  // expect('', 'empty string').to.be.empty;
+  // expect([], 'empty array').to.be.empty;
+  // expect({}, 'empty object').to.be.empty;
+  // expect([1, 2], 'non empty array').to.not.be.empty;
+  // expect({"name": "freshworks"}, 'non empty object').to.not.be.empty;
   matcher: function(expression) {
     return (expression.property && expression.property.name === 'empty');
   },
+  // assert.notOk('', 'empty string');
+  // assert.notOk(Array.from([]).length, 'empty array');
+  // assert.notOk(Object.keys({}).length, 'empty object');
+  // assert.ok(Array.from([1, 2]).length, 'non empty array');
+  // assert.ok(Object.keys({"name": "freshworks"}).length, 'non empty object');
   transformer: function (expression, path, j) {
-    var { assertArgumentSource, assertMessage } = extractExpect(path, j);
+    let { assertArgument, assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
+    
+    let assertParams = '';
+    let assertMethod = hasShouldNot ? 'ok' : 'notOk';
+    
+    switch(assertArgument.type) {
+      case "Literal":
+        assertParams = joinParams(assertArgumentSource, assertMessage);
+        break;
+      case "ArrayExpression":
+        let constructArr = `Array.from(${assertArgumentSource}).length`;
+        assertParams = joinParams(constructArr, assertMessage);
+        break;
+      case "ObjectExpression":
+        let constructObj = `Object.keys(${assertArgumentSource}).length`;
+        assertParams = joinParams(constructObj, assertMessage);
+        break;
+      default:
+        assertParams = joinParams(assertArgument.value, assertMessage);
+        break;
+    }
 
-    return `assert.notOk(${joinParams(assertArgumentSource, assertMessage)});`;
+    return `assert.${assertMethod}(${assertParams});`;
   }
 }, {
   name: 'expected-equal',
