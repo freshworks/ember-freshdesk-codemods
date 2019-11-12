@@ -19,6 +19,23 @@ module.exports = [{
   }
 }, {
   name: 'expected-false',
+  // expect().to.be.ok;
+  matcher: function (expression) {
+    return (expression.property && expression.property.name === 'ok');
+  },
+  transformer: function (expression, path, j) {
+    var {
+      assertArgumentSource,
+      assertMessage,
+      hasShouldNot
+    } = extractExpect(path, j);
+
+    var assertMethod = hasShouldNot ? 'notOk' : 'ok';
+
+    return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
+  }
+}, {
+  name: 'expected-false',
   // expect().to.be.false;
   matcher: function (expression) {
     return (expression.property && expression.property.name === 'false');

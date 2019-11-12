@@ -17,8 +17,9 @@ const {
 // [ ] Use hooks from module params and not as return value for setupTests
 // [ ] Add more fixtures
 // [ ] Take a sample batch of 50 and migrate them to qunit using some simple code-mods.
-// [ ] Refactor to a mapper to determine what type of assertion and what type of transform.
+// [X] Refactor to a mapper to determine what type of assertion and what type of transform.
 // [X] Clean up unused imports sych as context, findAll.
+// [ ] Clean up any beforeEach and afterEach called directly form mocha.
 
 module.exports = function transformer(file, api) {
   const j = getParser(api);
@@ -38,6 +39,14 @@ module.exports = function transformer(file, api) {
     ['ember-mocha', 'ember-qunit']
   ]
 
+  const setupTestTypes = [
+    'setupTest',
+    'setupRenderingTest',
+    'setupApplicationTest',
+    'setupRenderingForModule',
+    'setupApplicationForModule'
+  ];
+
   renameIdentifiers(renameIdentifierList, root, j);
   renameImports(renameImportImports, root, j);
 
@@ -46,6 +55,20 @@ module.exports = function transformer(file, api) {
     .forEach(transformerTests);
 
   cleanupImports(j, root);
+
+  setupTestTypes.forEach(function(setupTestType) {
+    root.find(j.FunctionExpression)
+      .filter((path) => j(path).find(j.Identifier, { name: setupTestType }).length !== 0)
+      .forEach((path) => {
+        if (path.node.params.length === 0) {
+          path.node.params.push('hooks');
+        }
+
+        j(path).find(j.VariableDeclaration)
+          .filter((path) => j(path).find(j.Identifier, { name: setupTestType }).length !== 0)
+          .replaceWith((path) => `${setupTestType}(hooks);`);
+      });
+  });
 
   return beautifyImports(
     root.toSource({

@@ -11,6 +11,8 @@ describe('Integration | Component', function() {
     // Simple true validation
     expect(true).to.be.true;
     expect(true, 'expect with message').to.be.true;
+    expect('Test').to.be.ok;
+    expect('Test', 'With message').to.be.ok;
 
     // Simple false validation
     expect(false).to.be.false;
@@ -23,6 +25,7 @@ describe('Integration | Component', function() {
     // Variations in equal assertion
     expect(true).to.equal(true);
     expect(find('[data-test-id=page-title]').innerText.trim(), '[Message] Expression with message').to.equal('[Expected] Page Title');
+    expect(window.location.pathname).to.be.equal('/support/login');
 
     // Variations in length
     // Find out if its a dom present case or not present case
@@ -38,6 +41,8 @@ describe('Integration | Component', function() {
     expect(false, 'Message').to.not.be.true;
     expect(true).to.not.be.false;
     expect(true, 'Message').to.not.be.false;
+
+    expect('Test', 'Message').to.not.be.ok;
   });
 
   it('Expect within a nested block', function() {
@@ -53,5 +58,4 @@ describe('Integration | Component', function() {
     });
 
   });
-
 });

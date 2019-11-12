@@ -5,14 +5,16 @@ import {
   setupWindowMock
 } from '@freshdesk/test-helpers';
 
-module('Integration | Component', function() {
-  let hooks = setupRenderingForModule();
+module('Integration | Component', function(hooks) {
+  setupRenderingForModule(hooks);
   setupWindowMock(hooks);
 
   test('basic expect statements', async function(assert) {
     // Simple true validation
     assert.equal(true, true);
     assert.equal(true, true, 'expect with message');
+    assert.ok('Test');
+    assert.ok('Test', 'With message');
 
     // Simple false validation
     assert.equal(false, false);
@@ -25,6 +27,7 @@ module('Integration | Component', function() {
     // Variations in equal assertion
     assert.equal(true, true);
     assert.equal(find('[data-test-id=page-title]').innerText.trim(), '[Expected] Page Title', '[Message] Expression with message');
+    assert.equal(window.location.pathname, '/support/login');
 
     // Variations in length
     // Find out if its a dom present case or not present case
@@ -40,6 +43,8 @@ module('Integration | Component', function() {
     assert.notEqual(false, true, 'Message');
     assert.notEqual(true, false);
     assert.notEqual(true, false, 'Message');
+
+    assert.notOk('Test', 'Message');
   });
 
   test('Expect within a nested block', function(assert) {
@@ -55,5 +60,4 @@ module('Integration | Component', function() {
     });
 
   });
-
 });
