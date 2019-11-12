@@ -1,0 +1,45 @@
+import { module, test } from 'qunit';
+import { find } from '@ember/test-helpers';
+import {
+  setupRenderingForModule,
+  setupWindowMock
+} from '@freshdesk/test-helpers';
+
+module('Integration | Component', function() {
+  let hooks = setupRenderingForModule();
+  setupWindowMock(hooks);
+
+  test('basic expect statements', async function(assert) {
+    // Simple true validation
+    assert.equal(true, true);
+    assert.equal(true, true, 'expect with message');
+
+    // Simple false validation
+    assert.equal(false, false);
+    assert.equal(false, false, 'expect with message');
+
+    // Negative cases with variance
+    assert.notOk(result);
+    assert.notOk(result, 'With Message');
+
+    // Variations in equal assertion
+    assert.equal(true, true);
+    assert.equal(find('[data-test-id=page-title]').innerText.trim(), '[Expected] Page Title', '[Message] Expression with message');
+
+    // Variations in length
+    // Find out if its a dom present case or not present case
+    assert.dom('[data-test-id=page-title]').exists({ count: 2 }, '[Message] Multiple elements should be present');
+    assert.dom('[data-test-id=page-title]').exists();
+    assert.dom('[data-test-id=page-title]').exists({ count: 1 }, '[Message] One Element Present'); // With message and length 1
+    assert.dom('[data-test-id=page-title]').doesNotExist('[Message] Element not present');
+    assert.dom('[data-test-id=page-title]').doesNotExist(); // Without message
+  });
+
+  test('basic negative expect statements', function(assert) {
+    assert.notEqual(false, true);
+    assert.notEqual(false, true, 'Message');
+    assert.notEqual(true, false);
+    assert.notEqual(true, false, 'Message');
+  });
+
+});

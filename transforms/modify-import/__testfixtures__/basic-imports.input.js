@@ -1,4 +1,5 @@
 import { describe, it } from 'mocha';
+import setupAcceptance from 'freshdesk/tests/helpers/setup-acceptance';
 import {
   addFeatures,
   addLaunched,

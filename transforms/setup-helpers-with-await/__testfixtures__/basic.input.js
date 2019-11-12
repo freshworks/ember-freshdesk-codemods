@@ -9,6 +9,10 @@ it('Setup current-account', function() {
     language: 'en'
   });
 
+  stubRouter(this, {
+    transitionToStub: this.transitionToSpy
+  });
+
   // ...
 });
 

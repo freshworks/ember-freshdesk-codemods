@@ -13,7 +13,8 @@ module.exports = function transformer(file, api) {
     'setupTranslations',
     'setupMirage',
     'setupSinonSandbox',
-    'setupOverlay'
+    'setupOverlay',
+    'setupRouteActions'
   ];
 
   const hookCallbacks = ['beforeEach', 'afterEach'];
@@ -48,6 +49,8 @@ module.exports = function transformer(file, api) {
     });
   });
 
+  // setupSolutions is unique case so handeling it seperatly
+  addHooksForSolutions(root, 'setupSolution');
   removeUnused(root);
   cleanupBlankImports(root);
 
@@ -133,6 +136,22 @@ module.exports = function transformer(file, api) {
         insertVariableHooks(name);
       });
     }
+  }
+
+  function addHooksForSolutions(root, name) {
+    root.find(j.CallExpression, {
+      callee: {
+        name
+      }
+    })
+    .forEach(({
+      node
+    }) => {
+      if(!(node.arguments[0] && node.arguments[0].name === 'hooks')) {
+        let hooksVar = j.identifier('hooks');
+        node.arguments = [hooksVar, ...node.arguments];
+      }
+    });
   }
 
   function insertVariableHooks(name) {

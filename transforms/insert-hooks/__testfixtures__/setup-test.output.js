@@ -10,6 +10,12 @@ describe('Some test', function() {
   setupTranslations(hooks);
   setupSinonSandbox(hooks);
 
+  setupSolution(hooks, {
+    isDefaultLocale: true
+  });
+
+  setupSolution(hooks);
+
   it('Some test', function() {
     // ...
   });

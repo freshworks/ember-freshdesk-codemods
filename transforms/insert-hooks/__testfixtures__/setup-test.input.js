@@ -7,6 +7,12 @@ describe('Some test', function() {
   setupTranslations(true);
   setupSinonSandbox();
 
+  setupSolution({
+    isDefaultLocale: true
+  });
+
+  setupSolution();
+
   it('Some test', function() {
     // ...
   });

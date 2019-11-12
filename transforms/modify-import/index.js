@@ -1,6 +1,7 @@
 const { getParser } = require('codemod-cli').jscodeshift;
 const { getOptions } = require('codemod-cli');
 const beautifyImports = require('../beautify-imports');
+const { cleanupBlankImports } = require('../cleanup-imports');
 const mapper = require('./mapper');
 
 module.exports = function transformer(file, api) {
@@ -16,12 +17,13 @@ module.exports = function transformer(file, api) {
       (importSpecifiers) => transformImport(
         root,
         importSpecifiers,
-        map.importDeclaration
+        map.importDeclaration,
+        map.importType
       )
     )
   );
 
-  cleanupBlankImports(root);
+  cleanupBlankImports(j, root);
 
   source = beautifyImports(
     root.toSource({
@@ -34,12 +36,16 @@ module.exports = function transformer(file, api) {
   return source;
 
   // Check if there any importSpecifier with the given name
-  function findImportSpecifier(root, importName, oldImportPath) {
-    return root.find(j.ImportSpecifier, {
-      imported: {
+  function findImportSpecifier(root, importName, oldImportPath, type = 'specifier') {
+    let isDefault = (type === 'default');
+    let importType = isDefault ? j.ImportDefaultSpecifier : j.ImportSpecifier;
+    return root.find(importType, {
+      local: {
         name: importName
       }
-    }).filter((path) => path.parent.value.source.value === oldImportPath);
+    }).filter((path) => {
+      return (path.parent.value.source.value === oldImportPath)
+    });
   };
 
   function findImportDeclaration(root, declarationName) {
@@ -69,8 +75,8 @@ module.exports = function transformer(file, api) {
     importDeclaration.specifiers.push(newSpecifier);
   };
 
-  function transformImport(root, specifierName, existingImportPath) {
-    let oldImportMethod = findImportSpecifier(root, specifierName, existingImportPath);
+  function transformImport(root, specifierName, existingImportPath, importType = 'specifier') {
+    let oldImportMethod = findImportSpecifier(root, specifierName, existingImportPath, importType);
 
     // Remove the import specifier from the old format if present
     oldImportMethod.remove();
@@ -80,10 +86,4 @@ module.exports = function transformer(file, api) {
       insertNewSpecifier(importDeclaration, specifierName);
     }
   };
-
-  function cleanupBlankImports(root) {
-    root.find(j.ImportDeclaration)
-      .filter((path) => (path.get().value.specifiers.length === 0))
-      .remove();
-  }
 }

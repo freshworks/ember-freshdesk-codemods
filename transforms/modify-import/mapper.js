@@ -20,7 +20,17 @@ module.exports = [{
       'setupCurrentUser',
       'setupCurrentAccount',
       'setupTranslations',
-      'setupRenderingWithMirage'
+      'setupRenderingWithMirage',
+      'setupAcceptance',
+      'spyFlashMessage',
+      'stubRouter'
+    ]
+  },
+  {
+    importDeclaration: 'freshdesk/tests/helpers/setup-acceptance',
+    importType: 'default',
+    importSpecifiers: [
+      'setupAcceptance'
     ]
   }
 ];

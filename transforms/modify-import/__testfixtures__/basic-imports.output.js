@@ -1,4 +1,5 @@
 import { describe, it } from 'mocha';
+
 import {
   addAbilities,
   addFeatures,
@@ -7,6 +8,7 @@ import {
   removeAbilities,
   removeFeatures,
   spyFlashMessage,
+  setupAcceptance,
 } from '@freshdesk/test-helpers';
 
 describe('Some test', function() {
