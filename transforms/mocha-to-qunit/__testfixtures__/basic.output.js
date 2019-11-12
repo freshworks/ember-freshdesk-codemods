@@ -42,4 +42,18 @@ module('Integration | Component', function() {
     assert.notEqual(true, false, 'Message');
   });
 
+  test('Expect within a nested block', function(assert) {
+    // Comment
+    [true, true].forEach((key) => {
+      // Inner Comment
+      assert.equal(item, true);
+    });
+
+    [true, true].forEach(function(item) {
+      // Inner Comment
+      assert.equal(item, true);
+    });
+
+  });
+
 });

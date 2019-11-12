@@ -11,7 +11,7 @@ function findExpect(path, j) {
     callee: {
       name: 'expect'
     }
-  }).at(0).get();
+  });
 }
 
 function findNegation(path, j) {
@@ -22,7 +22,7 @@ function findNegation(path, j) {
 }
 
 function extractExpect(path, j) {
-  let expectPath = findExpect(path, j);
+  let expectPath = findExpect(path, j).at(0).get();
   let hasShouldNot = findNegation(path, j);
   let assertArguments = expectPath.node.arguments;
   let assertArgument = assertArguments[0];
@@ -44,10 +44,44 @@ function extractExpect(path, j) {
   };
 }
 
+function renameIdentifier(fromName, toName, root, j) {
+  root.find(j.Identifier, {
+      name: fromName
+  }).forEach(path => path.node.name = toName);
+}
+
+function renameImport(fromName, toName, root, j) {
+  root.find(j.ImportDeclaration, {
+      source: {
+        value: fromName
+      }
+    })
+    .forEach(({
+      node
+    }) => node.source.value = toName);
+}
+
+function renameIdentifiers(list, root, j) {
+  list.forEach(([fromName, toName]) => {
+    renameIdentifier(fromName, toName, root, j);
+  });
+}
+
+function renameImports(list, root, j) {
+  list.forEach(([fromName, toName]) => {
+    renameImport(fromName, toName, root, j);
+  });
+}
+
+
 module.exports = {
   hasValue,
   joinParams,
   findExpect,
   extractExpect,
-  findNegation
+  findNegation,
+  renameIdentifier,
+  renameImport,
+  renameIdentifiers,
+  renameImports
 }

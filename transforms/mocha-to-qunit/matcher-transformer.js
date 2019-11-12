@@ -3,10 +3,10 @@ const { hasValue, joinParams, extractExpect } = require('./utils');
 module.exports = [{
   name: 'expected-true',
   // expect().to.be.true;
-  matcher: function(expression) {
+  matcher: function(expression, path, j) {
     return (expression.property && expression.property.name === 'true');
   },
-  transformer: function(path, expression, j) {
+  transformer: function(expression, path, j) {
     var {
       assertArgumentSource,
       assertMessage,
@@ -23,7 +23,7 @@ module.exports = [{
   matcher: function (expression) {
     return (expression.property && expression.property.name === 'false');
   },
-  transformer: function (path, expression, j) {
+  transformer: function (expression, path, j) {
     var {
       assertArgumentSource,
       assertMessage,
@@ -40,7 +40,7 @@ module.exports = [{
   matcher: function(expression) {
     return (expression.property && expression.property.name === 'empty');
   },
-  transformer: function (path, expression, j) {
+  transformer: function (expression, path, j) {
     var { assertArgumentSource, assertMessage } = extractExpect(path, j);
 
     return `assert.notOk(${joinParams(assertArgumentSource, assertMessage)});`;
@@ -51,7 +51,7 @@ module.exports = [{
   matcher: function(expression) {
     return (expression.callee && expression.callee.property.name === 'equal');
   },
-  transformer: function (path, expression, j) {
+  transformer: function (expression, path, j) {
     var { assertArgumentSource, assertMessage } = extractExpect(path, j);
     var expectedArgument = j(expression.arguments).toSource();
 
@@ -63,7 +63,7 @@ module.exports = [{
   matcher: function(expression) {
     return (expression.callee && expression.callee.property.name === 'length');
   },
-  transformer: function (path, expression, j) {
+  transformer: function (expression, path, j) {
     var { assertArgument, assertMessage } = extractExpect(path, j);
 
     var existsParam = null;

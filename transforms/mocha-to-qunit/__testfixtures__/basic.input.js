@@ -33,11 +33,25 @@ describe('Integration | Component', function() {
     expect(findAll('[data-test-id=page-title]')).to.have.length(0); // Without message
   });
 
-  it('basic negative expect statements', function () {
+  it('basic negative expect statements', function() {
     expect(false).to.not.be.true;
     expect(false, 'Message').to.not.be.true;
     expect(true).to.not.be.false;
     expect(true, 'Message').to.not.be.false;
+  });
+
+  it('Expect within a nested block', function() {
+    // Comment
+    [true, true].forEach((key) => {
+      // Inner Comment
+      expect(item).to.be.true;
+    });
+
+    [true, true].forEach(function(item) {
+      // Inner Comment
+      expect(item).to.be.true;
+    });
+
   });
 
 });
