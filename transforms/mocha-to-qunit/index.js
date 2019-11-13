@@ -125,7 +125,7 @@ module.exports = function transformer(file, api) {
         .closest(j.Expression)
         .replaceWith((path) => `${name}(hooks)`);
     } else {
-      hasHooks.replaceWith((path) => `${name}(hooks);`);
+      // hasHooks.replaceWith((path) => `${name}(hooks);`);
     }
   }
 
