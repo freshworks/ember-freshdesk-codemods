@@ -4,7 +4,11 @@
 const { getParser } = require('codemod-cli').jscodeshift;
 const { getOptions } = require('codemod-cli');
 const matcherTransformer = require('./matcher-transformer');
-const { cleanupImports } = require('../cleanup-imports');
+const {
+  cleanupImports,
+  setupHooksForTest,
+  setupCallbackHooks
+} = require('../cleanup-imports');
 const beautifyImports = require('../beautify-imports');
 const {
   findExpect,
@@ -13,12 +17,13 @@ const {
 } = require('./utils');
 
 // TODO We need to address the following
-// [ ] Take the list of expects and convert them to qunit asserts
-// [ ] Use hooks from module params and not as return value for setupTests
-// [ ] Add more fixtures
+// [ ] Take the list of expects and convert them to qunit asserts.
+// [ ] Use hooks from module params and not as return value for setupTests.
+// [ ] Add more fixtures.
 // [ ] Take a sample batch of 50 and migrate them to qunit using some simple code-mods.
 // [X] Refactor to a mapper to determine what type of assertion and what type of transform.
 // [X] Clean up unused imports sych as context, findAll.
+// [ ] Migrate context to module and add hooks.
 // [ ] Clean up any beforeEach and afterEach called directly form mocha.
 
 module.exports = function transformer(file, api) {
@@ -29,6 +34,7 @@ module.exports = function transformer(file, api) {
 
   const renameIdentifierList = [
     ['describe', 'module'],
+    ['context', 'module'],
     ['it', 'test'],
     ['setupRenderingWithMirage', 'setupRenderingForModule'],
     ['setupAcceptance', 'setupAcceptanceForModule']
@@ -47,6 +53,8 @@ module.exports = function transformer(file, api) {
     'setupApplicationForModule'
   ];
 
+  const callbackHooks = ['before', 'after', 'beforeEach', 'afterEach'];
+
   renameIdentifiers(renameIdentifierList, root, j);
   renameImports(renameImportImports, root, j);
 
@@ -56,11 +64,8 @@ module.exports = function transformer(file, api) {
 
   cleanupImports(j, root);
 
-  setupTestTypes.forEach(function(name) {
-    root.find(j.FunctionExpression)
-      .filter((path) => j(path).find(j.Identifier, { name }).length !== 0)
-      .forEach((path) => transformHooks(path, name));
-  });
+  setupHooksForTest(setupTestTypes, j, root);
+  setupCallbackHooks(callbackHooks, 'module', j, root);
 
   return beautifyImports(
     root.toSource({
@@ -78,9 +83,7 @@ module.exports = function transformer(file, api) {
   }
 
   function transformerTests(path) {
-    if (path.node.params.length === 0) {
-      path.node.params.push('assert');
-    }
+    path.node.params = ['assert'];
 
     j(path).find(j.ExpressionStatement)
       .filter(filterOnlyExpectExpressions)
@@ -110,22 +113,5 @@ module.exports = function transformer(file, api) {
     }
 
     return matchedExpression;
-  }
-
-  function transformHooks(path, name) {
-    if (path.node.params.length === 0) {
-      path.node.params.push('hooks');
-    }
-
-    let hasHooks = j(path).find(j.VariableDeclaration)
-      .filter((path) => j(path).find(j.Identifier, { name }).length !== 0);
-
-    if(hasHooks.length === 0) {
-      j(path).find(j.Identifier, { name })
-        .closest(j.Expression)
-        .replaceWith((path) => `${name}(hooks)`);
-    } else {
-      hasHooks.replaceWith((path) => `${name}(hooks);`);
-    }
   }
 }
