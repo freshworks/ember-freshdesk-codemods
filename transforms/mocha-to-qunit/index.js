@@ -56,18 +56,10 @@ module.exports = function transformer(file, api) {
 
   cleanupImports(j, root);
 
-  setupTestTypes.forEach(function(setupTestType) {
+  setupTestTypes.forEach(function(name) {
     root.find(j.FunctionExpression)
-      .filter((path) => j(path).find(j.Identifier, { name: setupTestType }).length !== 0)
-      .forEach((path) => {
-        if (path.node.params.length === 0) {
-          path.node.params.push('hooks');
-        }
-
-        j(path).find(j.VariableDeclaration)
-          .filter((path) => j(path).find(j.Identifier, { name: setupTestType }).length !== 0)
-          .replaceWith((path) => `${setupTestType}(hooks);`);
-      });
+      .filter((path) => j(path).find(j.Identifier, { name }).length !== 0)
+      .forEach((path) => transformHooks(path, name));
   });
 
   return beautifyImports(
@@ -118,6 +110,23 @@ module.exports = function transformer(file, api) {
     }
 
     return matchedExpression;
+  }
+
+  function transformHooks(path, name) {
+    if (path.node.params.length === 0) {
+      path.node.params.push('hooks');
+    }
+
+    let hasHooks = j(path).find(j.VariableDeclaration)
+      .filter((path) => j(path).find(j.Identifier, { name }).length !== 0);
+
+    if(hasHooks.length === 0) {
+      j(path).find(j.Identifier, { name })
+        .closest(j.Expression)
+        .replaceWith((path) => `${name}(hooks)`);
+    } else {
+      hasHooks.replaceWith((path) => `${name}(hooks);`);
+    }
   }
 
 }

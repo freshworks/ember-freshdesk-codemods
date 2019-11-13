@@ -1,12 +1,14 @@
 import { module, test } from 'qunit';
 import { find } from '@ember/test-helpers';
 import {
-  setupRenderingForModule,
-  setupWindowMock
+  setupTest,
+  setupWindowMock,
+  setupApplicationTest
 } from '@freshdesk/test-helpers';
 
 module('Integration | Component', function(hooks) {
-  setupRenderingForModule(hooks);
+  setupApplicationTest(hooks);
+  setupTest(hooks);
   setupWindowMock(hooks);
 
   test('basic expect statements', async function(assert) {
