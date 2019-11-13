@@ -128,5 +128,4 @@ module.exports = function transformer(file, api) {
       hasHooks.replaceWith((path) => `${name}(hooks);`);
     }
   }
-
 }
