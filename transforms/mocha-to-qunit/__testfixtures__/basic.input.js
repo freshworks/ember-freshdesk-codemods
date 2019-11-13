@@ -1,10 +1,11 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { find, findAll } from '@ember/test-helpers';
-import { setupRenderingWithMirage, setupWindowMock } from '@freshdesk/test-helpers';
+import { setupTest, setupWindowMock, setupApplicationTest } from '@freshdesk/test-helpers';
 
 describe('Integration | Component', function() {
-  let hooks = setupRenderingWithMirage();
+  let hooks = setupApplicationTest();
+  setupTest();
   setupWindowMock(hooks);
 
   it('basic expect statements', async function() {
