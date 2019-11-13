@@ -40,26 +40,43 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').doesNotExist(); // Without message
   });
 
-  test('basic negative expect statements', function(assert) {
-    assert.notEqual(false, true);
-    assert.notEqual(false, true, 'Message');
-    assert.notEqual(true, false);
-    assert.notEqual(true, false, 'Message');
+  module('Context test turns to module', function(hooks) {
 
-    assert.notOk('Test', 'Message');
+    hooks.beforeEach(function() {
+      // Testing for beforeEach with hooks
+    });
+
+    test('basic negative expect statements', function(assert) {
+      assert.notEqual(false, true);
+      assert.notEqual(false, true, 'Message');
+      assert.notEqual(true, false);
+      assert.notEqual(true, false, 'Message');
+
+      assert.notOk('Test', 'Message');
+    });
   });
 
-  test('Expect within a nested block', function(assert) {
-    // Comment
-    [true, true].forEach((key) => {
-      // Inner Comment
-      assert.equal(item, true);
+  module('Context test turns to module', function(hooks) {
+
+    hooks.beforeEach(function() {
+      // Testing for beforeEach with hooks
     });
 
-    [true, true].forEach(function(item) {
-      // Inner Comment
-      assert.equal(item, true);
+    hooks.afterEach(function() {
+      // Testing for afterEach without hooks attribute
     });
 
+    test('Expect within a nested block', function(assert) {
+      // Comment
+      [true, true].forEach((key) => {
+        // Inner Comment
+        assert.equal(item, true);
+      });
+
+      [true, true].forEach(function(item) {
+        // Inner Comment
+        assert.equal(item, true);
+      });
+    });
   });
 });
