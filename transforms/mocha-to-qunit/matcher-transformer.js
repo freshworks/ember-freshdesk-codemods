@@ -1,4 +1,4 @@
-const { hasValue, joinParams, extractExpect } = require('./utils');
+const { hasValue, joinParams, extractExpect, constructDomExists } = require('./utils');
 
 module.exports = [{
   name: 'expected-true',
@@ -52,6 +52,32 @@ module.exports = [{
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, false, assertMessage)});`;
   }
 }, {
+   name: 'expected-null',
+   /* expect(result)
+      .to.be.null,
+      .to.not.null
+   */
+   matcher: function(expression) {
+     return (expression.property && expression.property.name === 'null');
+   },
+   transformer: function (expression, path, j) {
+     var {
+       assertArgumentSource,
+       assertArgument,
+       assertMessage,
+       hasShouldNot,
+       hasSelector
+     } = extractExpect(path, j);
+
+     if (hasSelector) {
+       // not.be.null will be dom exists assertion hence !hasShouldNot
+       return constructDomExists(j, assertArgument, assertMessage, hasShouldNot, 1);
+     } else {
+       var assertMethod = hasShouldNot ? 'notEmpty': 'empty';
+       return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
+     }
+   }
+}, {
   name: 'expected-empty',
   // expect(result).to.be.empty;
   matcher: function(expression) {
@@ -81,21 +107,41 @@ module.exports = [{
     return (expression.callee && expression.callee.property.name === 'length');
   },
   transformer: function (expression, path, j) {
-    var { assertArgument, assertMessage } = extractExpect(path, j);
+    var { assertArgument, assertMessage, hasSelector } = extractExpect(path, j);
 
     var existsParam = null;
     var lengthValue = expression.arguments[0].value;
     var domSelector = j(assertArgument.arguments).toSource();
     var domExpression;
 
-    if (lengthValue === 0) {
-      domExpression = `doesNotExist(${assertMessage})`;
+    if (hasSelector) {
+      return constructDomExists(j, assertArgument, assertMessage, (lengthValue > 0), lengthValue);
     } else {
-      if ((lengthValue > 1) || hasValue(assertMessage)) {
-        existsParam = `{ count: ${lengthValue} }`;
-      }
-      domExpression = `exists(${joinParams(existsParam, assertMessage)})`;
+      // NOTE need to handle the length method that is not used for findAll;
+      return j(expression).toSource();
     }
-    return `assert.dom(${domSelector}).${domExpression};`;
   }
+}, {
+   name: 'expected-contains',
+   /* expect(result)
+      .to.be.contains,
+      .to.contain,
+      .to.have.contain,
+      .to.be.contain,
+      .to.contains,
+      .to.not.contain,
+      .to.not.contains,
+   */
+   matcher: function(expression) {
+     let name = expression.callee.property && expression.callee.property.name;
+     return name.includes('contain');
+   },
+   transformer: function (expression, path, j) {
+     var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
+     var expectedArgument = j(expression.arguments).toSource();
+
+     var assertMethod = hasShouldNot ? 'notIncludes' : 'includes';
+
+     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
+   }
 }];

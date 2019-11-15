@@ -37,43 +37,26 @@ describe('Integration | Component', function() {
     expect(findAll('[data-test-id=page-title]')).to.have.length(0); // Without message
   });
 
-  context('Context test turns to module', function() {
+  // 'expected-contains'
+  it('Contains expects expected-contains', function() {
+    expect('Message has input').to.be.contains('input');
+    expect([1, 2]).to.be.contain(2);
+    expect('Message has input', 'Assertions Message').to.have.contain('input');
+    expect('Message has input').to.be.contain('input');
+    expect('Message has input').to.contains('input');
 
-    beforeEach(function() {
-      // Testing for beforeEach with hooks
-    });
-
-    it('basic negative expect statements', function() {
-      expect(false).to.not.be.true;
-      expect(false, 'Message').to.not.be.true;
-      expect(true).to.not.be.false;
-      expect(true, 'Message').to.not.be.false;
-
-      expect('Test', 'Message').to.not.be.ok;
-    });
+    // Not contains
+    expect('Message').to.not.contain('input');
+    expect('Message', 'Assertions Message').to.not.contains('input');
   });
 
-  context('Context test turns to module', function() {
+  // 'expected-null'
+  it('Contains expects expected-contains', function() {
+    expect('Has Value', 'message').to.not.be.null;
+    expect(['Has Value'], 'message').to.be.null;
 
-    hooks.beforeEach(function() {
-      // Testing for beforeEach with hooks
-    });
-
-    afterEach(function() {
-      // Testing for afterEach without hooks attribute
-    });
-
-    it('Expect within a nested block', function() {
-      // Comment
-      [true, true].forEach((key) => {
-        // Inner Comment
-        expect(item).to.be.true;
-      });
-
-      [true, true].forEach(function(item) {
-        // Inner Comment
-        expect(item).to.be.true;
-      });
-    });
+    // or assert.dom('selector').doesNotExist(message);
+    expect(find('dom-selector'), 'message').to.not.be.null;
+    expect(find('dom-selector'), 'message').to.be.null;
   });
 });
