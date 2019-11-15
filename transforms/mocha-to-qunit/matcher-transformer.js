@@ -70,10 +70,35 @@ module.exports = [{
      } = extractExpect(path, j);
 
      if (hasSelector) {
-       // not.be.null will be dom exists assertion hence !hasShouldNot
+       // not.be.null will be dom exists assertion hence hasShouldNot
        return constructDomExists(j, assertArgument, assertMessage, hasShouldNot, 1);
      } else {
        var assertMethod = hasShouldNot ? 'notEmpty': 'empty';
+       return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
+     }
+   }
+}, {
+   name: 'expected-exists',
+   /* expect(result)
+      .to.be.exist,
+      .to.not.be.exist
+   */
+   matcher: function(expression) {
+     return (expression.property && expression.property.name === 'exist');
+   },
+   transformer: function (expression, path, j) {
+     var {
+       assertArgumentSource,
+       assertArgument,
+       assertMessage,
+       hasShouldNot,
+       hasSelector
+     } = extractExpect(path, j);
+
+     if (hasSelector) {
+       return constructDomExists(j, assertArgument, assertMessage, !hasShouldNot, 1);
+     } else {
+       var assertMethod = hasShouldNot ? 'notOk': 'ok';
        return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
      }
    }
@@ -133,7 +158,7 @@ module.exports = [{
       .to.not.contains,
    */
    matcher: function(expression) {
-     let name = expression.callee.property && expression.callee.property.name;
+     let name = (expression.callee && expression.callee.property.name) || '';
      return name.includes('contain');
    },
    transformer: function (expression, path, j) {

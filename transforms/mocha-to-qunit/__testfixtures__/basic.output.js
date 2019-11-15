@@ -54,11 +54,25 @@ module('Integration | Component', function(hooks) {
   });
 
   // 'expected-null'
-  test('Contains expects expected-contains', function(assert) {
+  test('Contains expects expected-null', function(assert) {
     assert.notEmpty('Has Value', 'message');
     assert.empty(['Has Value'], 'message');
 
     // or assert.dom('selector').doesNotExist(message);
+    assert.dom('dom-selector').exists({ count: 1 }, 'message');
+    assert.dom('dom-selector').doesNotExist('message');
+  });
+
+  // 'expected-exists'
+  test('Contains expects expected-exists', function(assert) {
+    let refrence = 'Some Value';
+    assert.ok('Value');
+    assert.ok(['Has Value'], 'message');
+    assert.ok(refrence, 'message');
+    assert.notOk(refrence, 'message');
+
+    // or assert.dom('selector').doesNotExist(message);
+    assert.dom('dom-selector').exists();
     assert.dom('dom-selector').exists({ count: 1 }, 'message');
     assert.dom('dom-selector').doesNotExist('message');
   });
