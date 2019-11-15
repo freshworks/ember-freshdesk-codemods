@@ -21,6 +21,12 @@ function findNegation(path, j) {
   return notIdentifier.length !== 0;
 }
 
+function findSelectorHelper(path, j) {
+  return ['find', 'findAll'].some((name) => {
+    return j(path).find(j.Identifier, { name }).length;
+  });
+}
+
 function extractExpect(path, j) {
   let expectPath = findExpect(path, j).at(0).get();
   let hasShouldNot = findNegation(path, j);
@@ -28,6 +34,9 @@ function extractExpect(path, j) {
   let assertArgument = assertArguments[0];
   let assertArgumentSource = j(assertArgument).toSource();
   let hasMessage = (assertArguments.length > 1);
+
+  let hasSelector = findSelectorHelper(assertArguments, j);
+
   let assertMessage = '';
 
   if (hasMessage) {
@@ -40,8 +49,25 @@ function extractExpect(path, j) {
     assertArgumentSource,
     hasMessage,
     assertMessage,
-    hasShouldNot
+    hasShouldNot,
+    hasSelector
   };
+}
+
+function constructDomExists(j, assertArgument, assertMessage, exists = true, length = 1) {
+  let countParam = '';
+  let domSelector = j(assertArgument.arguments).toSource();
+
+  if (exists) {
+    if (length > 1 || hasValue(assertMessage)) {
+      countParam = `{ count: ${length} }`;
+    }
+    domExpression = `exists(${joinParams(countParam, assertMessage)})`;
+  } else {
+    domExpression = `doesNotExist(${assertMessage})`;
+  }
+
+  return `assert.dom(${domSelector}).${domExpression};`;
 }
 
 function renameIdentifier(fromName, toName, root, j) {
@@ -79,6 +105,7 @@ module.exports = {
   joinParams,
   findExpect,
   extractExpect,
+  constructDomExists,
   findNegation,
   renameIdentifier,
   renameImport,
