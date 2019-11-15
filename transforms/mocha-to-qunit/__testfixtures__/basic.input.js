@@ -51,12 +51,26 @@ describe('Integration | Component', function() {
   });
 
   // 'expected-null'
-  it('Contains expects expected-contains', function() {
+  it('Contains expects expected-null', function() {
     expect('Has Value', 'message').to.not.be.null;
     expect(['Has Value'], 'message').to.be.null;
 
     // or assert.dom('selector').doesNotExist(message);
     expect(find('dom-selector'), 'message').to.not.be.null;
     expect(find('dom-selector'), 'message').to.be.null;
+  });
+
+  // 'expected-exists'
+  it('Contains expects expected-exists', function() {
+    let refrence = 'Some Value';
+    expect('Value').to.exist;
+    expect(['Has Value'], 'message').to.exist;
+    expect(refrence, 'message').to.exist;
+    expect(refrence, 'message').not.to.exist;
+
+    // or assert.dom('selector').doesNotExist(message);
+    expect(find('dom-selector')).to.exist;
+    expect(find('dom-selector'), 'message').to.exist;
+    expect(find('dom-selector'), 'message').to.not.exist;
   });
 });
