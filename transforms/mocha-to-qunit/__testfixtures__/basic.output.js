@@ -38,6 +38,13 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').exists({ count: 1 }, '[Message] One Element Present'); // With message and length 1
     assert.dom('[data-test-id=page-title]').doesNotExist('[Message] Element not present');
     assert.dom('[data-test-id=page-title]').doesNotExist(); // Without message
+    // Should handle this edge cases
+    // expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
+    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
+
+    // Variations in dom assertions
+    assert.dom('[data-test-id=page-title]').exists();
+    assert.dom('[data-test-id=page-title]').doesNotExist();
   });
 
   test('basic negative expect statements', function(assert) {
@@ -50,6 +57,10 @@ module('Integration | Component', function(hooks) {
 
     assert.notOk('Test', 'Message');
     assert.ok('Test', 'not empty assertion');
+
+    // Variations in dom assertions
+    assert.dom('[data-test-id=page-title]').doesNotExist();
+    assert.dom('[data-test-id=page-title]').exists();
   });
 
   // 'expected-contains'
@@ -85,6 +96,8 @@ module('Integration | Component', function(hooks) {
 
     // or assert.dom('selector').doesNotExist(message);
     assert.dom('dom-selector').exists();
+    // Should handle this edge cases
+    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.exist;
     assert.dom('dom-selector').exists({ count: 1 }, 'message');
     assert.dom('dom-selector').doesNotExist('message');
   });
