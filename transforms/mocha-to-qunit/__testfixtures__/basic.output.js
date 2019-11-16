@@ -17,6 +17,8 @@ module('Integration | Component', function(hooks) {
     assert.equal(true, true, 'expect with message');
     assert.ok('Test');
     assert.ok('Test', 'With message');
+    assert.ok('Test');
+    assert.ok('Test', 'With message');
 
     // Simple false validation
     assert.equal(false, false);
@@ -25,6 +27,7 @@ module('Integration | Component', function(hooks) {
     // Negative cases with variance
     assert.notOk(result);
     assert.notOk(result, 'With Message');
+    assert.notOk(undefined);
 
     // Variations in equal assertion
     assert.equal(true, true);
@@ -47,22 +50,6 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').doesNotExist();
   });
 
-  test('basic negative expect statements', function(assert) {
-    assert.notEqual(false, true);
-    assert.notEqual(false, true, 'Message');
-    assert.notEqual(true, false);
-    assert.notEqual(true, false, 'Message');
-    assert.notEqual(1, 2);
-    assert.notEqual(1, 2, 'Message');
-
-    assert.notOk('Test', 'Message');
-    assert.ok('Test', 'not empty assertion');
-
-    // Variations in dom assertions
-    assert.dom('[data-test-id=page-title]').doesNotExist();
-    assert.dom('[data-test-id=page-title]').exists();
-  });
-
   // 'expected-contains'
   test('Contains expects expected-contains', function(assert) {
     assert.includes('Message has input', 'input');
@@ -71,9 +58,20 @@ module('Integration | Component', function(hooks) {
     assert.includes('Message has input', 'input');
     assert.includes('Message has input', 'input');
 
+    assert.includes('Message has input', 'input');
+    assert.includes('Message has input', 'input');
+    assert.includes([1, 2], 2);
+    assert.includes([1, 2], 2);
+    assert.includes('Message has input', 'input');
+    // Should handle this edge cases
+    // expect(options).to.be.an('array').to.not.include(serviceTaskType);
+
     // Not contains
     assert.notIncludes('Message', 'input');
     assert.notIncludes('Message', 'input', 'Assertions Message');
+    assert.notIncludes('Message', 'input');
+    assert.notIncludes('Message', 'input', 'Assertions Message');
+    assert.notIncludes('Message', 'input');
   });
 
   // 'expected-null'

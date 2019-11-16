@@ -24,17 +24,20 @@ module.exports = [{
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertValue, assertMessage)});`;
   }
 }, {
-  name: 'expected-ok-or-empty-or-exists',
+  name: 'expected-ok-or-empty-or-exists-or-present-or-undefined',
   /* expect()
     .to.be.ok,
     .to.be.not.ok,
     .to.be.empty,
     .to.be.not.empty,
     .to.be.exist,
-    .to.not.be.exist
+    .to.not.be.exist,
+    .to.be.present,
+    .to.be.not.present,
+    .to.be.undefined
   */
   matcher: function (expression) {
-    return expression.property && ['ok', 'empty', 'exist'].includes(expression.property.name);
+    return expression.property && ['ok', 'empty', 'exist', 'present', 'undefined'].includes(expression.property.name);
   },
   transformer: function (expression, path, j) {
     var {
@@ -45,7 +48,7 @@ module.exports = [{
       hasSelector
     } = extractExpect(path, j);
 
-    if(expression.property.name === 'empty') {
+    if(['empty', 'undefined'].includes(expression.property.name)) {
       hasShouldNot = !hasShouldNot;
     }
 
@@ -119,7 +122,7 @@ module.exports = [{
     }
   }
 }, {
-   name: 'expected-contains',
+   name: 'expected-contains-or-includes-or-string',
    /* expect(result)
       .to.be.contains,
       .to.contain,
@@ -128,10 +131,16 @@ module.exports = [{
       .to.contains,
       .to.not.contain,
       .to.not.contains,
+      .to.includes,
+      .to.not.includes,
+      .to.include,
+      .to.not.include,
+      .to.have.string,
+      .to.not.have.string
    */
    matcher: function(expression) {
      let name = (expression.callee && expression.callee.property.name) || '';
-     return name.includes('contain');
+     return name.includes('contain') || name.includes('include') || name === 'string';
    },
    transformer: function (expression, path, j) {
      var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
