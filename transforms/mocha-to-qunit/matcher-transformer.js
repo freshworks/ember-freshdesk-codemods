@@ -1,10 +1,15 @@
 const { hasValue, joinParams, extractExpect, constructDomExists } = require('./utils');
 
 module.exports = [{
-  name: 'expected-true',
-  // expect().to.be.true;
+  name: 'expected-true-or-false',
+  /* expect()
+    .to.be.true,
+    .to.be.false,
+    .to.be.not.true,
+    .to.be.not.false,
+  */
   matcher: function(expression, path, j) {
-    return (expression.property && expression.property.name === 'true');
+    return expression.property && ['true', 'false'].includes(expression.property.name);
   },
   transformer: function(expression, path, j) {
     var {
@@ -14,14 +19,20 @@ module.exports = [{
     } = extractExpect(path, j);
 
     var assertMethod = hasShouldNot ? 'notEqual': 'equal';
+    var assertValue = expression.property.name === 'true';
 
-    return `assert.${assertMethod}(${joinParams(assertArgumentSource, true, assertMessage)});`;
+    return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertValue, assertMessage)});`;
   }
 }, {
-  name: 'expected-false',
-  // expect().to.be.ok;
+  name: 'expected-ok-or-empty',
+  /* expect()
+    .to.be.ok;
+    .to.be.not.ok;
+    .to.be.empty;
+    .to.be.not.empty;
+  */
   matcher: function (expression) {
-    return (expression.property && expression.property.name === 'ok');
+    return expression.property && ['ok', 'empty'].includes(expression.property.name);
   },
   transformer: function (expression, path, j) {
     var {
@@ -30,26 +41,14 @@ module.exports = [{
       hasShouldNot
     } = extractExpect(path, j);
 
-    var assertMethod = hasShouldNot ? 'notOk' : 'ok';
+    var assertMethod;
+    if(expression.property.name === 'ok') {
+      assertMethod = hasShouldNot ? 'notOk' : 'ok';
+    } else {
+      assertMethod = hasShouldNot ? 'ok' : 'notOk';
+    }
 
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
-  }
-}, {
-  name: 'expected-false',
-  // expect().to.be.false;
-  matcher: function (expression) {
-    return (expression.property && expression.property.name === 'false');
-  },
-  transformer: function (expression, path, j) {
-    var {
-      assertArgumentSource,
-      assertMessage,
-      hasShouldNot
-    } = extractExpect(path, j);
-
-    var assertMethod = hasShouldNot ? 'notEqual' : 'equal';
-
-    return `assert.${assertMethod}(${joinParams(assertArgumentSource, false, assertMessage)});`;
   }
 }, {
    name: 'expected-null',
@@ -103,27 +102,19 @@ module.exports = [{
      }
    }
 }, {
-  name: 'expected-empty',
-  // expect(result).to.be.empty;
-  matcher: function(expression) {
-    return (expression.property && expression.property.name === 'empty');
-  },
-  transformer: function (expression, path, j) {
-    var { assertArgumentSource, assertMessage } = extractExpect(path, j);
-
-    return `assert.notOk(${joinParams(assertArgumentSource, assertMessage)});`;
-  }
-}, {
   name: 'expected-equal',
   // expect(true).to.equal(true);
+  // expect(1).to.not.equal(2);
   matcher: function(expression) {
     return (expression.callee && expression.callee.property.name === 'equal');
   },
   transformer: function (expression, path, j) {
-    var { assertArgumentSource, assertMessage } = extractExpect(path, j);
+    var { assertArgumentSource, hasShouldNot, assertMessage } = extractExpect(path, j);
     var expectedArgument = j(expression.arguments).toSource();
 
-    return `assert.equal(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
+    var assertMethod = hasShouldNot ? 'notEqual': 'equal';
+
+    return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
   }
 }, {
   name: 'expected-length',
