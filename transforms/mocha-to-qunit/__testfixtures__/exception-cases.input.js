@@ -18,8 +18,15 @@ describe('Integration | Component', function() {
       expect(false, 'Message').to.not.be.true;
       expect(true).to.not.be.false;
       expect(true, 'Message').to.not.be.false;
+      expect(1).to.not.equal(2);
+      expect(1, 'Message').to.not.equal(2);
 
       expect('Test', 'Message').to.not.be.ok;
+      expect('Test', 'not empty assertion').to.not.be.empty;
+
+      // Variations in dom assertions
+      expect(find('[data-test-id=page-title]')).to.be.not.ok;
+      expect(findAll('[data-test-id=page-title]')).to.not.be.empty;
     });
   });
 
