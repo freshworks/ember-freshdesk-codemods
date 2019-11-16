@@ -35,6 +35,13 @@ describe('Integration | Component', function() {
     expect(findAll('[data-test-id=page-title]'), '[Message] One Element Present').to.have.length(1); // With message and length 1
     expect(findAll('[data-test-id=page-title]'), '[Message] Element not present').to.have.length(0);
     expect(findAll('[data-test-id=page-title]')).to.have.length(0); // Without message
+    // Should handle this edge cases
+    // expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
+    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
+
+    // Variations in dom assertions
+    expect(find('[data-test-id=page-title]')).to.be.ok;
+    expect(findAll('[data-test-id=page-title]')).to.be.empty;
   });
 
   it('basic negative expect statements', function() {
@@ -47,6 +54,10 @@ describe('Integration | Component', function() {
 
     expect('Test', 'Message').to.not.be.ok;
     expect('Test', 'not empty assertion').to.not.be.empty;
+
+    // Variations in dom assertions
+    expect(find('[data-test-id=page-title]')).to.be.not.ok;
+    expect(findAll('[data-test-id=page-title]')).to.not.be.empty;
   });
 
   // 'expected-contains'
@@ -82,6 +93,8 @@ describe('Integration | Component', function() {
 
     // or assert.dom('selector').doesNotExist(message);
     expect(find('dom-selector')).to.exist;
+    // Should handle this edge cases
+    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.exist;
     expect(find('dom-selector'), 'message').to.exist;
     expect(find('dom-selector'), 'message').to.not.exist;
   });
