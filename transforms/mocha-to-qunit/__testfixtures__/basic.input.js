@@ -37,6 +37,18 @@ describe('Integration | Component', function() {
     expect(findAll('[data-test-id=page-title]')).to.have.length(0); // Without message
   });
 
+  it('basic negative expect statements', function() {
+    expect(false).to.not.be.true;
+    expect(false, 'Message').to.not.be.true;
+    expect(true).to.not.be.false;
+    expect(true, 'Message').to.not.be.false;
+    expect(1).to.not.equal(2);
+    expect(1, 'Message').to.not.equal(2);
+
+    expect('Test', 'Message').to.not.be.ok;
+    expect('Test', 'not empty assertion').to.not.be.empty;
+  });
+
   // 'expected-contains'
   it('Contains expects expected-contains', function() {
     expect('Message has input').to.be.contains('input');

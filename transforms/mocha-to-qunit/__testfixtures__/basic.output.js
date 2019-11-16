@@ -40,6 +40,18 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').doesNotExist(); // Without message
   });
 
+  test('basic negative expect statements', function(assert) {
+    assert.notEqual(false, true);
+    assert.notEqual(false, true, 'Message');
+    assert.notEqual(true, false);
+    assert.notEqual(true, false, 'Message');
+    assert.notEqual(1, 2);
+    assert.notEqual(1, 2, 'Message');
+
+    assert.notOk('Test', 'Message');
+    assert.ok('Test', 'not empty assertion');
+  });
+
   // 'expected-contains'
   test('Contains expects expected-contains', function(assert) {
     assert.includes('Message has input', 'input');
