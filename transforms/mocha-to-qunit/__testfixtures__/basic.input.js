@@ -50,6 +50,21 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.exist;
   });
 
+  // 'dom-specific-assertions'
+  it('expects various dom specific assertions', function() {
+    expect(find('[data-test-id=page-title]')).to.have.attr('href', 'link');
+    expect(find('[data-test-id=page-title]'), 'Assertion Message').to.have.attribute('aria-label', 'label');
+    expect(find('[data-test-id=page-title]')).to.have.attribute('disabled');
+    expect(find('[data-test-id=page-title]')).to.have.class('text--bold');
+    expect(find('[data-test-id=page-title]')).to.be.disabled;
+    expect(find('[data-test-id=page-title]'), 'Assertion Message').to.be.visible;
+    expect(find('[data-test-id=page-title]')).to.have.text('input');
+
+    expect(find('[data-test-id=page-title]'), 'Assertion Message').to.not.have.attr('disabled');
+    expect(find('[data-test-id=page-title]')).to.not.be.disabled;
+    expect(find('[data-test-id=page-title]')).to.not.be.visible;
+  });
+
   // 'expected-contains'
   it('Contains expects expected-contains', function() {
     expect('Message has input').to.be.contains('input');

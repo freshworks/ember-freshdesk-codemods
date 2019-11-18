@@ -53,6 +53,21 @@ module('Integration | Component', function(hooks) {
     assert.ok(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]'));
   });
 
+  // 'dom-specific-assertions'
+  test('expects various dom specific assertions', function(assert) {
+    assert.dom('[data-test-id=page-title]').hasAttribute('href', 'link');
+    assert.dom('[data-test-id=page-title]').hasAttribute('aria-label', 'label', 'Assertion Message');
+    assert.dom('[data-test-id=page-title]').hasAttribute('disabled');
+    assert.dom('[data-test-id=page-title]').hasClass('text--bold');
+    assert.dom('[data-test-id=page-title]').isDisabled();
+    assert.dom('[data-test-id=page-title]').isVisible('Assertion Message');
+    assert.dom('[data-test-id=page-title]').hasText('input');
+
+    assert.dom('[data-test-id=page-title]').doesNotHaveAttribute('disabled', 'Assertion Message');
+    assert.dom('[data-test-id=page-title]').isNotDisabled();
+    assert.dom('[data-test-id=page-title]').isNotVisible();
+  });
+
   // 'expected-contains'
   test('Contains expects expected-contains', function(assert) {
     assert.includes('Message has input', 'input');
