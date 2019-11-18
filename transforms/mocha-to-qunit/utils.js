@@ -6,6 +6,29 @@ function joinParams(...params) {
   return params.filter((param) => hasValue(param)).join(', ');
 }
 
+function getQunitDomAssertType(assertType, hasShouldNot) {
+  var domAssertionsMapping = {
+    positive: {
+      attr: 'hasAttribute',
+      attribute: 'hasAttribute',
+      class: 'hasClass',
+      text: 'hasText',
+      visible: 'isVisible',
+      disabled: 'isDisabled',
+      value: 'hasValue'
+    },
+    negative: {
+      attr: 'doesNotHaveAttribute',
+      attribute: 'doesNotHaveAttribute',
+      class: 'doesNotHaveClass',
+      visible: 'isNotVisible',
+      disabled: 'isNotDisabled'
+    }
+  };
+  let assertionMap = hasShouldNot ? domAssertionsMapping.negative : domAssertionsMapping.positive;
+  return assertionMap[assertType];
+}
+
 function findExpect(path, j) {
   return j(path).find(j.CallExpression, {
     callee: {
@@ -78,6 +101,19 @@ function constructDomExists(j, assertArgument, assertMessage, exists = true, len
   return `assert.dom(${domSelector}).${domExpression};`;
 }
 
+function constructDomAssertions(j, assertArgument, assertMessage, assertType, hasShouldNot, expectedArguments = []) {
+  let domSelector = j(assertArgument.arguments).toSource();
+  let qunitAssertType = getQunitDomAssertType(assertType, hasShouldNot);
+  let assertionArguments = [];
+  if(expectedArguments.length) {
+    assertionArguments = expectedArguments.length > 1 ? j(expectedArguments).toSource() : [j(expectedArguments).toSource()];
+  }
+  if(hasValue(assertMessage)) {
+    assertionArguments.push(assertMessage);
+  }
+  return `assert.dom(${domSelector}).${qunitAssertType}(${assertionArguments.join(', ')});`;
+}
+
 function renameIdentifier(fromName, toName, root, j) {
   root.find(j.Identifier, {
       name: fromName
@@ -114,6 +150,7 @@ module.exports = {
   findExpect,
   extractExpect,
   constructDomExists,
+  constructDomAssertions,
   findNegation,
   renameIdentifier,
   renameImport,
