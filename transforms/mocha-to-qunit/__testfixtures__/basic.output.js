@@ -48,6 +48,9 @@ module('Integration | Component', function(hooks) {
     // Variations in dom assertions
     assert.dom('[data-test-id=page-title]').exists();
     assert.dom('[data-test-id=page-title]').doesNotExist();
+    assert.includes(find('[data-test-id=page-title]').getAttribute('href'), '/some/url');
+    assert.equal(find('[data-test-id=page-title]').className.includes('active'), true);
+    assert.ok(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]'));
   });
 
   // 'expected-contains'
@@ -94,8 +97,6 @@ module('Integration | Component', function(hooks) {
 
     // or assert.dom('selector').doesNotExist(message);
     assert.dom('dom-selector').exists();
-    // Should handle this edge cases
-    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.exist;
     assert.dom('dom-selector').exists({ count: 1 }, 'message');
     assert.dom('dom-selector').doesNotExist('message');
   });

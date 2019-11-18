@@ -27,6 +27,11 @@ function findSelectorHelper(path, j) {
   });
 }
 
+function hasChainedProperty(node, j) {
+  let property = node.property || node.callee.property;
+  return property && property.name;
+}
+
 function extractExpect(path, j) {
   let expectPath = findExpect(path, j).at(0).get();
   let hasShouldNot = findNegation(path, j);
@@ -36,6 +41,7 @@ function extractExpect(path, j) {
   let hasMessage = (assertArguments.length > 1);
 
   let hasSelector = findSelectorHelper(assertArguments, j);
+  let hasSelectorWithoutProperty = hasSelector && !hasChainedProperty(assertArgument);
 
   let assertMessage = '';
 
@@ -50,7 +56,8 @@ function extractExpect(path, j) {
     hasMessage,
     assertMessage,
     hasShouldNot,
-    hasSelector
+    hasSelector,
+    hasSelectorWithoutProperty
   };
 }
 

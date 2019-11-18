@@ -45,6 +45,9 @@ describe('Integration | Component', function() {
     // Variations in dom assertions
     expect(find('[data-test-id=page-title]')).to.be.ok;
     expect(findAll('[data-test-id=page-title]')).to.be.empty;
+    expect(find('[data-test-id=page-title]').getAttribute('href')).to.contain('/some/url');
+    expect(find('[data-test-id=page-title]').className.includes('active')).to.be.true;
+    expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.exist;
   });
 
   // 'expected-contains'
@@ -91,8 +94,6 @@ describe('Integration | Component', function() {
 
     // or assert.dom('selector').doesNotExist(message);
     expect(find('dom-selector')).to.exist;
-    // Should handle this edge cases
-    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.exist;
     expect(find('dom-selector'), 'message').to.exist;
     expect(find('dom-selector'), 'message').to.not.exist;
   });
