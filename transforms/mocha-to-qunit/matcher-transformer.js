@@ -137,7 +137,6 @@ module.exports = [{
     var existsParam = null;
     var lengthValue = expression.arguments[0].value;
     var domSelector = j(assertArgument.arguments).toSource();
-    var domExpression;
 
     if (hasSelector) {
       return constructDomExists(j, assertArgument, assertMessage, (lengthValue > 0), lengthValue);

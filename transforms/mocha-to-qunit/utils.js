@@ -57,6 +57,7 @@ function extractExpect(path, j) {
 function constructDomExists(j, assertArgument, assertMessage, exists = true, length = 1) {
   let countParam = '';
   let domSelector = j(assertArgument.arguments).toSource();
+  let domExpression = '';
 
   if (exists) {
     if (length > 1 || hasValue(assertMessage)) {
