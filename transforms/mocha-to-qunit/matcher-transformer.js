@@ -45,14 +45,14 @@ module.exports = [{
       assertArgument,
       assertMessage,
       hasShouldNot,
-      hasSelector
+      hasSelectorWithoutProperty
     } = extractExpect(path, j);
 
     if(['empty', 'undefined'].includes(expression.property.name)) {
       hasShouldNot = !hasShouldNot;
     }
 
-    if (hasSelector) {
+    if (hasSelectorWithoutProperty) {
       return constructDomExists(j, assertArgument, assertMessage, !hasShouldNot, 1);
     } else {
       var assertMethod = hasShouldNot ? 'notOk' : 'ok';
@@ -74,10 +74,10 @@ module.exports = [{
        assertArgument,
        assertMessage,
        hasShouldNot,
-       hasSelector
+       hasSelectorWithoutProperty
      } = extractExpect(path, j);
 
-     if (hasSelector) {
+     if (hasSelectorWithoutProperty) {
        // not.be.null will be dom exists assertion hence hasShouldNot
        return constructDomExists(j, assertArgument, assertMessage, hasShouldNot, 1);
      } else {
@@ -107,13 +107,13 @@ module.exports = [{
     return (expression.callee && expression.callee.property.name === 'length');
   },
   transformer: function (expression, path, j) {
-    var { assertArgument, assertMessage, hasSelector } = extractExpect(path, j);
+    var { assertArgument, assertMessage, hasSelectorWithoutProperty } = extractExpect(path, j);
 
     var existsParam = null;
     var lengthValue = expression.arguments[0].value;
     var domSelector = j(assertArgument.arguments).toSource();
 
-    if (hasSelector) {
+    if (hasSelectorWithoutProperty) {
       return constructDomExists(j, assertArgument, assertMessage, (lengthValue > 0), lengthValue);
     } else {
       // NOTE need to handle the length method that is not used for findAll;
