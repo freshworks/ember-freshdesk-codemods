@@ -58,7 +58,11 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-title]')).to.have.class('text--bold');
     expect(find('[data-test-id=page-title]')).to.be.disabled;
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.be.visible;
-    expect(find('[data-test-id=page-title]')).to.have.text('input');
+    expect(find('[data-test-id=page-title]'), 'Assertion Message').to.have.text('input');
+    expect(find('[data-test-id=page-title]')).to.have.trimmed.text('input');
+    expect(find('[data-test-id=page-title]')).to.contain.text('input');
+    expect(find('[data-test-id=page-title]'),'Assertion Message').to.contain.trimmed.text('input');
+    expect(find('[data-test-id=page-title]')).to.have.value('input');
 
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.not.have.attr('disabled');
     expect(find('[data-test-id=page-title]')).to.not.be.disabled;
