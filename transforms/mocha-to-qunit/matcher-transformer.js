@@ -90,13 +90,18 @@ module.exports = [{
   // expect(true).to.equal(true);
   // expect(1).to.not.equal(2);
   matcher: function(expression) {
-    return (expression.callee && expression.callee.property.name === 'equal');
+    return (expression.callee && ['equal', 'eql'].includes(expression.callee.property.name));
   },
   transformer: function (expression, path, j) {
     var { assertArgumentSource, hasShouldNot, assertMessage } = extractExpect(path, j);
     var expectedArgument = j(expression.arguments).toSource();
+    var assertMethod;
 
-    var assertMethod = hasShouldNot ? 'notEqual': 'equal';
+    if(expression.callee.property.name === 'equal') {
+      assertMethod = hasShouldNot ? 'notEqual': 'equal';
+    } else {
+      assertMethod = hasShouldNot ? 'notDeepEqual': 'deepEqual';
+    }
 
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
   }
