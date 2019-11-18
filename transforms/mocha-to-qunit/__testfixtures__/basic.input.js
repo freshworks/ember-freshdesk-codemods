@@ -14,6 +14,8 @@ describe('Integration | Component', function() {
     expect(true, 'expect with message').to.be.true;
     expect('Test').to.be.ok;
     expect('Test', 'With message').to.be.ok;
+    expect('Test').to.be.present;
+    expect('Test', 'With message').to.be.present;
 
     // Simple false validation
     expect(false).to.be.false;
@@ -22,6 +24,7 @@ describe('Integration | Component', function() {
     // Negative cases with variance
     expect(result).to.be.empty;
     expect(result, 'With Message').to.be.empty;
+    expect(undefined).to.be.undefined;
 
     // Variations in equal assertion
     expect(true).to.equal(true);
@@ -35,6 +38,13 @@ describe('Integration | Component', function() {
     expect(findAll('[data-test-id=page-title]'), '[Message] One Element Present').to.have.length(1); // With message and length 1
     expect(findAll('[data-test-id=page-title]'), '[Message] Element not present').to.have.length(0);
     expect(findAll('[data-test-id=page-title]')).to.have.length(0); // Without message
+    // Should handle this edge cases
+    // expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
+    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
+
+    // Variations in dom assertions
+    expect(find('[data-test-id=page-title]')).to.be.ok;
+    expect(findAll('[data-test-id=page-title]')).to.be.empty;
   });
 
   // 'expected-contains'
@@ -45,9 +55,20 @@ describe('Integration | Component', function() {
     expect('Message has input').to.be.contain('input');
     expect('Message has input').to.contains('input');
 
+    expect('Message has input').to.be.include('input');
+    expect('Message has input').to.includes('input');
+    expect([1, 2]).to.be.include(2);
+    expect([1, 2]).to.be.includes(2);
+    expect('Message has input').to.have.string('input');
+    // Should handle this edge cases
+    // expect(options).to.be.an('array').to.not.include(serviceTaskType);
+
     // Not contains
     expect('Message').to.not.contain('input');
     expect('Message', 'Assertions Message').to.not.contains('input');
+    expect('Message').to.not.include('input');
+    expect('Message', 'Assertions Message').to.not.includes('input');
+    expect('Message').to.not.have.string('input');
   });
 
   // 'expected-null'
@@ -70,6 +91,8 @@ describe('Integration | Component', function() {
 
     // or assert.dom('selector').doesNotExist(message);
     expect(find('dom-selector')).to.exist;
+    // Should handle this edge cases
+    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.exist;
     expect(find('dom-selector'), 'message').to.exist;
     expect(find('dom-selector'), 'message').to.not.exist;
   });

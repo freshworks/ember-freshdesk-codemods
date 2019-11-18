@@ -21,8 +21,15 @@ module('Integration | Component', function(hooks) {
       assert.notEqual(false, true, 'Message');
       assert.notEqual(true, false);
       assert.notEqual(true, false, 'Message');
+      assert.notEqual(1, 2);
+      assert.notEqual(1, 2, 'Message');
 
       assert.notOk('Test', 'Message');
+      assert.ok('Test', 'not empty assertion');
+
+      // Variations in dom assertions
+      assert.dom('[data-test-id=page-title]').doesNotExist();
+      assert.dom('[data-test-id=page-title]').exists();
     });
   });
 
