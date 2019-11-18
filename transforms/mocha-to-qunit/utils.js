@@ -44,6 +44,13 @@ function findNegation(path, j) {
   return notIdentifier.length !== 0;
 }
 
+function findIdentifier(path, j, name) {
+  let identifier = j(path).find(j.Identifier, {
+    name
+  });
+  return identifier.length !== 0;
+}
+
 function findSelectorHelper(path, j) {
   return ['find', 'findAll'].some((name) => {
     return j(path).find(j.Identifier, { name }).length;
@@ -152,6 +159,7 @@ module.exports = {
   constructDomExists,
   constructDomAssertions,
   findNegation,
+  findIdentifier,
   renameIdentifier,
   renameImport,
   renameIdentifiers,

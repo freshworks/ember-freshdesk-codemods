@@ -28,10 +28,14 @@ describe('Integration | Component', function() {
 
     // Variations in equal assertion
     expect(true).to.equal(true);
+    expect(true).to.equals(true);
+    expect(true).to.eq(true);
     expect(find('[data-test-id=page-title]').innerText.trim(), '[Message] Expression with message').to.equal('[Expected] Page Title');
     expect(window.location.pathname).to.be.equal('/support/login');
     expect({key: value}).to.eql({key: value});
     expect({key: value}, 'Assertion Message').to.eql({key: value});
+    expect({key: value}).to.deep.equal({key: value});
+    expect({key: value}).to.not.deep.equal({key: some_other_value});
 
     // Variations in length
     // Find out if its a dom present case or not present case

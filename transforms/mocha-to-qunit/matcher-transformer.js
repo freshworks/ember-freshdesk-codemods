@@ -1,4 +1,4 @@
-const { hasValue, joinParams, extractExpect, constructDomExists, constructDomAssertions } = require('./utils');
+const { hasValue, joinParams, extractExpect, constructDomExists, constructDomAssertions, findIdentifier } = require('./utils');
 
 module.exports = [{
   name: 'expected-true-or-false',
@@ -87,20 +87,28 @@ module.exports = [{
    }
 }, {
   name: 'expected-equal',
-  // expect(true).to.equal(true);
+  // expect(true)
+  //  .to.equal(true);
+  //  .to.equals(true);
+  //  .to.eq(true);
   // expect(1).to.not.equal(2);
+  // expect({key: value})
+  //  .to.deep.equal({key: value});
+  //  .to.eql({key: value});
+  //  .to.not.deep.equal({key: someOthervalue});
   matcher: function(expression) {
-    return (expression.callee && ['equal', 'eql'].includes(expression.callee.property.name));
+    return (expression.callee && ['equal', 'eql', 'eq', 'equals'].includes(expression.callee.property.name));
   },
   transformer: function (expression, path, j) {
     var { assertArgumentSource, hasShouldNot, assertMessage } = extractExpect(path, j);
     var expectedArgument = j(expression.arguments).toSource();
     var assertMethod;
+    var hasDeepAssertion = findIdentifier(path, j, 'deep');
 
-    if(expression.callee.property.name === 'equal') {
-      assertMethod = hasShouldNot ? 'notEqual': 'equal';
-    } else {
+    if(expression.callee.property.name === 'eql' || hasDeepAssertion) {
       assertMethod = hasShouldNot ? 'notDeepEqual': 'deepEqual';
+    } else {
+      assertMethod = hasShouldNot ? 'notEqual': 'equal';
     }
 
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
