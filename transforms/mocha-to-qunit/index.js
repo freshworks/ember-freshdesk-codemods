@@ -59,13 +59,14 @@ module.exports = function transformer(file, api) {
 
   renameIdentifiers(renameIdentifierList, root, j);
   renameImports(renameImportImports, root, j);
+  // transformer for moving it.skip, describe.skip, module.skip => skip and nested children to have skip
+  transformSkippedTests(j, root);
 
   root.find(j.FunctionExpression)
-    .filter((path) => (path.parent.node.callee.name == 'test'))
+    .filter((path) => ['test', 'skip'].includes(path.parent.node.callee.name))
     .forEach(transformerTests);
 
   cleanupImports(j, root);
-
   setupHooksForTest(setupTestTypes, j, root);
   setupCallbackHooks(callbackHooks, 'module', j, root);
 
@@ -77,18 +78,77 @@ module.exports = function transformer(file, api) {
     })
   );
 
-  function filterOnlyExpectExpressions(path) {
-    let hasExpect = (findExpect(path, j).length > 0);
+  function transformSkippedTests(j, root, skipName = 'skip') {
+    let collection = root.find(j.CallExpression, {
+      callee: {
+        property: {
+          name: skipName
+        }
+      }
+    }).forEach((path) => {
+      let { node } = path;
+      let name = (node.callee.object || node.callee).name;
+
+      tranformObjectToCallee(j, path, name);
+    }).forEach((path) => {
+      j(path.parent).find(j.CallExpression)
+        .filter(({node}) => {
+          let name = (node.callee.object || node.callee).name;
+          return (name === 'test');
+        })
+        .forEach((path) => {
+          tranformObjectToCallee(j, path, skipName);
+        });
+    });
+
+    if(collection.length > 0) {
+      importSkip(root, j, skipName);
+    }
+  }
+
+  function importSkip(root, j, name) {
+    root.find(j.ImportDeclaration, {
+      source: {
+        value: 'qunit'
+      }
+    }).forEach((path) => {
+      let hasImport = (j(path).find(j.ImportSpecifier, {
+        imported: {
+          name
+        }
+      }).length > 0);
+
+      if(!hasImport) {
+        path.node.specifiers.push(j.importSpecifier(j.identifier(name)));
+      }
+    });
+  }
+
+  function tranformObjectToCallee(j, path, toName) {
+    let node = path.node;
+    let callee = node.callee.object || node.callee;
+
+    path.node.callee = j.identifier(toName);
+  }
+
+  function filterOnlyFunctions(path) {
     let hasArrowFunction = (j(path).find(j.ArrowFunctionExpression).length === 0);
     let hasFunction = (j(path).find(j.FunctionExpression).length === 0);
-    return (hasArrowFunction && hasFunction && hasExpect);
+    return (hasArrowFunction && hasFunction);
+  }
+
+  function pathHasExpects(path) {
+    return (findExpect(path, j).length > 0);
   }
 
   function transformerTests(path) {
-    path.node.params = ['assert'];
+    if(pathHasExpects(path)) {
+      path.node.params = ['assert'];
+    }
 
     j(path).find(j.ExpressionStatement)
-      .filter(filterOnlyExpectExpressions)
+      .filter(pathHasExpects)
+      .filter(filterOnlyFunctions)
       .forEach(transformExpect);
   }
 
