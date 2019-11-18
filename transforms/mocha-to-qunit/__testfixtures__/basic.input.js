@@ -140,5 +140,6 @@ describe('Integration | Component', function() {
     expect({x: 1}).to.be.an('object');
     let currentDateVar = new Date();
     expect(currentDateVar).to.be.a('date');
+    expect([1, 2]).to.be.an.instanceof(Array);
   });
 });

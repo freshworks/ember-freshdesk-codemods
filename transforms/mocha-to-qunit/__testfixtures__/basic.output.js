@@ -143,5 +143,6 @@ module('Integration | Component', function(hooks) {
     assert.instanceOf(Object, {x: 1});
     let currentDateVar = new Date();
     assert.instanceOf(Date, currentDateVar);
+    assert.instanceOf(Array, [1, 2]);
   });
 });

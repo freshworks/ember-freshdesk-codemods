@@ -243,14 +243,14 @@ module.exports = [{
   // expect().to.be.a;
   // expect().to.be.an;
   matcher: function (expression) {
-    return (expression.callee && ['a', 'an'].includes(expression.callee.property.name));
+    return (expression.callee && ['a', 'an', 'instanceof'].includes(expression.callee.property.name));
   },
   transformer: function (expression, path, j) {
     var {
       assertArgumentSource,
       assertMessage
     } = extractExpect(path, j);
-    let expectedArgument = expression.arguments[0].value;
+    let expectedArgument = expression.arguments[0].value || expression.arguments[0].name.toLowerCase();
     let assertArgumentType;
     
     switch(expectedArgument) {
