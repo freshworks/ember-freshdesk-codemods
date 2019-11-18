@@ -61,7 +61,11 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').hasClass('text--bold');
     assert.dom('[data-test-id=page-title]').isDisabled();
     assert.dom('[data-test-id=page-title]').isVisible('Assertion Message');
+    assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').hasText('input');
+    assert.dom('[data-test-id=page-title]').hasText('input');
+    assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
+    assert.dom('[data-test-id=page-title]').hasValue('input');
 
     assert.dom('[data-test-id=page-title]').doesNotHaveAttribute('disabled', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').isNotDisabled();
