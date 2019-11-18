@@ -33,6 +33,8 @@ module('Integration | Component', function(hooks) {
     assert.equal(true, true);
     assert.equal(find('[data-test-id=page-title]').innerText.trim(), '[Expected] Page Title', '[Message] Expression with message');
     assert.equal(window.location.pathname, '/support/login');
+    assert.deepEqual({key: value}, {key: value});
+    assert.deepEqual({key: value}, {key: value}, 'Assertion Message');
 
     // Variations in length
     // Find out if its a dom present case or not present case

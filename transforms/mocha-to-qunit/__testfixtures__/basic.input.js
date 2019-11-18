@@ -30,6 +30,8 @@ describe('Integration | Component', function() {
     expect(true).to.equal(true);
     expect(find('[data-test-id=page-title]').innerText.trim(), '[Message] Expression with message').to.equal('[Expected] Page Title');
     expect(window.location.pathname).to.be.equal('/support/login');
+    expect({key: value}).to.eql({key: value});
+    expect({key: value}, 'Assertion Message').to.eql({key: value});
 
     // Variations in length
     // Find out if its a dom present case or not present case
