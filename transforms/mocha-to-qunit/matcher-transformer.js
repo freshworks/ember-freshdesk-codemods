@@ -81,7 +81,7 @@ module.exports = [{
        // not.be.null will be dom exists assertion hence hasShouldNot
        return constructDomExists(j, assertArgument, assertMessage, hasShouldNot, 1);
      } else {
-       var assertMethod = hasShouldNot ? 'notEmpty': 'empty';
+       var assertMethod = hasShouldNot ? 'ok': 'notOk';
        return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
      }
    }

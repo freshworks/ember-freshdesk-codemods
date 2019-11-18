@@ -44,7 +44,7 @@ function setupCallbackHooks(hooks, name, j, root) {
   root.find(j.CallExpression, { callee: { name }})
     .filter((path) => {
       let actualPath = path.node.arguments[1];
-      let isNestedModule = findIdentifier(actualPath, 'module', j, root).length === 0;
+      let isNestedModule = findIdentifier(actualPath, name, j, root).length === 0;
       let hasHooks = hooks.some((name) => {
         return !(findIdentifier(path, name, j, root).length === 0);
       });

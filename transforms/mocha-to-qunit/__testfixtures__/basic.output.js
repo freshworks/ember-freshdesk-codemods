@@ -79,8 +79,8 @@ module('Integration | Component', function(hooks) {
 
   // 'expected-null'
   test('Contains expects expected-null', function(assert) {
-    assert.notEmpty('Has Value', 'message');
-    assert.empty(['Has Value'], 'message');
+    assert.ok('Has Value', 'message');
+    assert.notOk(['Has Value'], 'message');
 
     // or assert.dom('selector').doesNotExist(message);
     assert.dom('dom-selector').exists({ count: 1 }, 'message');
