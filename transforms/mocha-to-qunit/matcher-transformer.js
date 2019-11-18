@@ -149,4 +149,44 @@ module.exports = [{
 
      return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
    }
+}, {
+  name: 'expected-lt-lte-below-gt-gte-above',
+  /* expect()
+    .to.be.lt,
+    .to.be.lte,
+    .to.be.below,
+    .to.be.gt,
+    .to.be.gte,
+    .to.be.above
+  */
+  matcher: function (expression) {
+    return expression.callee && ['lt', 'below', 'lte', 'gt', 'above', 'gte'].includes(expression.callee.property.name);
+  },
+  transformer: function (expression, path, j) {
+    var {
+      assertArgumentSource,
+      assertMessage
+    } = extractExpect(path, j);
+    var expectedArgument = j(expression.arguments).toSource();
+    let assertMethod;
+
+    switch(expression.callee.property.name) {
+      case 'lt':
+      case 'below':
+        assertMethod = `lt`;
+        break;
+      case 'gt':
+      case 'above':
+        assertMethod = `gt`;
+        break;
+      case 'lte':
+        assertMethod = `lte`;
+        break;
+      case 'gte':
+        assertMethod = `gte`;
+        break;
+    }
+
+    return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)})`;
+  }
 }];

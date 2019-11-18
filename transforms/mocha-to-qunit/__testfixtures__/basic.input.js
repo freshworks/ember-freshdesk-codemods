@@ -97,4 +97,15 @@ describe('Integration | Component', function() {
     expect(find('dom-selector'), 'message').to.exist;
     expect(find('dom-selector'), 'message').to.not.exist;
   });
+
+  // compare assertions
+  it('Contains expects lt, lte, below, gt, gte, above', function() {
+    expect(1).to.be.below(2);
+    expect(2, 'assert message').to.be.lt(3);
+    expect(2).to.be.lte(2);
+    
+    expect(1).to.be.above(2);
+    expect(2, 'assert message').to.be.gt(3);
+    expect(2).to.be.gte(2);
+  });
 });
