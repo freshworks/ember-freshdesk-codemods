@@ -18,14 +18,14 @@ const {
 
 // TODO We need to address the following
 // [ ] Take the list of expects and convert them to qunit asserts.
-// [ ] Use hooks from module params and not as return value for setupTests.
+// [X] Use hooks from module params and not as return value for setupTests.
 // [ ] Add more fixtures.
 // [ ] Take a sample batch of 50 and migrate them to qunit using some simple code-mods.
 // [X] Refactor to a mapper to determine what type of assertion and what type of transform.
 // [X] Clean up unused imports sych as context, findAll.
 // [ ] There are some tests which have an expect as the return statements and also having await methods infront of it.
-// [ ] Migrate context to module and add hooks.
-// [ ] If a describe or a context is skipped then all the tests within the specifc module needs to be skipped and added as an import to qunit
+// [X] Migrate context to module and add hooks.
+// [X] If a describe or a context is skipped then all the tests within the specifc module needs to be skipped and added as an import to qunit
 // [ ] Clean up any beforeEach and afterEach called directly form mocha.
 
 module.exports = function transformer(file, api) {
