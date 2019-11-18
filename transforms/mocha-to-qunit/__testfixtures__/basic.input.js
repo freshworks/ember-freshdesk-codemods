@@ -133,4 +133,12 @@ describe('Integration | Component', function() {
     expect(2, 'assert message').to.be.gt(3);
     expect(2).to.be.gte(2);
   });
+
+  // type check
+  it('Contains expects a, an', function() {
+    expect([1,2,3]).to.be.an('array');
+    expect({x: 1}).to.be.an('object');
+    let currentDateVar = new Date();
+    expect(currentDateVar).to.be.a('date');
+  });
 });

@@ -136,4 +136,12 @@ module('Integration | Component', function(hooks) {
     assert.gt(2, 3, 'assert message');
     assert.gte(2, 2);
   });
+
+  // type check
+  test('Contains expects a, an', function(assert) {
+    assert.instanceOf(Array, [1,2,3]);
+    assert.instanceOf(Object, {x: 1});
+    let currentDateVar = new Date();
+    assert.instanceOf(Date, currentDateVar);
+  });
 });

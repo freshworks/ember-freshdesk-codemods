@@ -238,5 +238,34 @@ module.exports = [{
       return j(expression).toSource();
     }
   }
-},
+},{
+  name: 'expected-a-an',
+  // expect().to.be.a;
+  // expect().to.be.an;
+  matcher: function (expression) {
+    return (expression.callee && ['a', 'an'].includes(expression.callee.property.name));
+  },
+  transformer: function (expression, path, j) {
+    var {
+      assertArgumentSource,
+      assertMessage
+    } = extractExpect(path, j);
+    let expectedArgument = expression.arguments[0].value;
+    let assertArgumentType;
+    
+    switch(expectedArgument) {
+      case 'array':
+        assertArgumentType = `Array`;
+        break;
+      case 'date':
+        assertArgumentType = `Date`;
+        break;
+      case 'object':
+        assertArgumentType = `Object`;
+        break;
+    }
+
+    return `assert.instanceOf(${joinParams(assertArgumentType, assertArgumentSource, assertMessage)});`;
+  }
+}
 ];
