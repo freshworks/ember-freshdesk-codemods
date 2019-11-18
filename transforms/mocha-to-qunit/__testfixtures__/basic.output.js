@@ -125,4 +125,15 @@ module('Integration | Component', function(hooks) {
     assert.dom('dom-selector').exists({ count: 1 }, 'message');
     assert.dom('dom-selector').doesNotExist('message');
   });
+
+  // compare assertions
+  test('Contains expects lt, lte, below, gt, gte, above', function(assert) {
+    assert.lt(1, 2);
+    assert.lt(2, 3, 'assert message');
+    assert.lte(2, 2);
+    
+    assert.gt(1, 2);
+    assert.gt(2, 3, 'assert message');
+    assert.gte(2, 2);
+  });
 });
