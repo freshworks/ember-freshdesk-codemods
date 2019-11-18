@@ -31,8 +31,14 @@ module('Integration | Component', function(hooks) {
 
     // Variations in equal assertion
     assert.equal(true, true);
+    assert.equal(true, true);
+    assert.equal(true, true);
     assert.equal(find('[data-test-id=page-title]').innerText.trim(), '[Expected] Page Title', '[Message] Expression with message');
     assert.equal(window.location.pathname, '/support/login');
+    assert.deepEqual({key: value}, {key: value});
+    assert.deepEqual({key: value}, {key: value}, 'Assertion Message');
+    assert.deepEqual({key: value}, {key: value});
+    assert.notDeepEqual({key: value}, {key: some_other_value});
 
     // Variations in length
     // Find out if its a dom present case or not present case
@@ -51,6 +57,25 @@ module('Integration | Component', function(hooks) {
     assert.includes(find('[data-test-id=page-title]').getAttribute('href'), '/some/url');
     assert.equal(find('[data-test-id=page-title]').className.includes('active'), true);
     assert.ok(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]'));
+  });
+
+  // 'dom-specific-assertions'
+  test('expects various dom specific assertions', function(assert) {
+    assert.dom('[data-test-id=page-title]').hasAttribute('href', 'link');
+    assert.dom('[data-test-id=page-title]').hasAttribute('aria-label', 'label', 'Assertion Message');
+    assert.dom('[data-test-id=page-title]').hasAttribute('disabled');
+    assert.dom('[data-test-id=page-title]').hasClass('text--bold');
+    assert.dom('[data-test-id=page-title]').isDisabled();
+    assert.dom('[data-test-id=page-title]').isVisible('Assertion Message');
+    assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
+    assert.dom('[data-test-id=page-title]').hasText('input');
+    assert.dom('[data-test-id=page-title]').hasText('input');
+    assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
+    assert.dom('[data-test-id=page-title]').hasValue('input');
+
+    assert.dom('[data-test-id=page-title]').doesNotHaveAttribute('disabled', 'Assertion Message');
+    assert.dom('[data-test-id=page-title]').isNotDisabled();
+    assert.dom('[data-test-id=page-title]').isNotVisible();
   });
 
   // 'expected-contains'
@@ -79,8 +104,8 @@ module('Integration | Component', function(hooks) {
 
   // 'expected-null'
   test('Contains expects expected-null', function(assert) {
-    assert.notEmpty('Has Value', 'message');
-    assert.empty(['Has Value'], 'message');
+    assert.ok('Has Value', 'message');
+    assert.notOk(['Has Value'], 'message');
 
     // or assert.dom('selector').doesNotExist(message);
     assert.dom('dom-selector').exists({ count: 1 }, 'message');

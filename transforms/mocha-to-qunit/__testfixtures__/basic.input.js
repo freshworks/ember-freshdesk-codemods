@@ -28,8 +28,14 @@ describe('Integration | Component', function() {
 
     // Variations in equal assertion
     expect(true).to.equal(true);
+    expect(true).to.equals(true);
+    expect(true).to.eq(true);
     expect(find('[data-test-id=page-title]').innerText.trim(), '[Message] Expression with message').to.equal('[Expected] Page Title');
     expect(window.location.pathname).to.be.equal('/support/login');
+    expect({key: value}).to.eql({key: value});
+    expect({key: value}, 'Assertion Message').to.eql({key: value});
+    expect({key: value}).to.deep.equal({key: value});
+    expect({key: value}).to.not.deep.equal({key: some_other_value});
 
     // Variations in length
     // Find out if its a dom present case or not present case
@@ -48,6 +54,25 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-title]').getAttribute('href')).to.contain('/some/url');
     expect(find('[data-test-id=page-title]').className.includes('active')).to.be.true;
     expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.exist;
+  });
+
+  // 'dom-specific-assertions'
+  it('expects various dom specific assertions', function() {
+    expect(find('[data-test-id=page-title]')).to.have.attr('href', 'link');
+    expect(find('[data-test-id=page-title]'), 'Assertion Message').to.have.attribute('aria-label', 'label');
+    expect(find('[data-test-id=page-title]')).to.have.attribute('disabled');
+    expect(find('[data-test-id=page-title]')).to.have.class('text--bold');
+    expect(find('[data-test-id=page-title]')).to.be.disabled;
+    expect(find('[data-test-id=page-title]'), 'Assertion Message').to.be.visible;
+    expect(find('[data-test-id=page-title]'), 'Assertion Message').to.have.text('input');
+    expect(find('[data-test-id=page-title]')).to.have.trimmed.text('input');
+    expect(find('[data-test-id=page-title]')).to.contain.text('input');
+    expect(find('[data-test-id=page-title]'),'Assertion Message').to.contain.trimmed.text('input');
+    expect(find('[data-test-id=page-title]')).to.have.value('input');
+
+    expect(find('[data-test-id=page-title]'), 'Assertion Message').to.not.have.attr('disabled');
+    expect(find('[data-test-id=page-title]')).to.not.be.disabled;
+    expect(find('[data-test-id=page-title]')).to.not.be.visible;
   });
 
   // 'expected-contains'

@@ -1,4 +1,4 @@
-const { hasValue, joinParams, extractExpect, constructDomExists } = require('./utils');
+const { hasValue, joinParams, extractExpect, constructDomExists, constructDomAssertions, findIdentifier } = require('./utils');
 
 module.exports = [{
   name: 'expected-true-or-false',
@@ -81,22 +81,35 @@ module.exports = [{
        // not.be.null will be dom exists assertion hence hasShouldNot
        return constructDomExists(j, assertArgument, assertMessage, hasShouldNot, 1);
      } else {
-       var assertMethod = hasShouldNot ? 'notEmpty': 'empty';
+       var assertMethod = hasShouldNot ? 'ok': 'notOk';
        return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
      }
    }
 }, {
   name: 'expected-equal',
-  // expect(true).to.equal(true);
+  // expect(true)
+  //  .to.equal(true);
+  //  .to.equals(true);
+  //  .to.eq(true);
   // expect(1).to.not.equal(2);
+  // expect({key: value})
+  //  .to.deep.equal({key: value});
+  //  .to.eql({key: value});
+  //  .to.not.deep.equal({key: someOthervalue});
   matcher: function(expression) {
-    return (expression.callee && expression.callee.property.name === 'equal');
+    return (expression.callee && ['equal', 'eql', 'eq', 'equals'].includes(expression.callee.property.name));
   },
   transformer: function (expression, path, j) {
     var { assertArgumentSource, hasShouldNot, assertMessage } = extractExpect(path, j);
     var expectedArgument = j(expression.arguments).toSource();
+    var assertMethod;
+    var hasDeepAssertion = findIdentifier(path, j, 'deep');
 
-    var assertMethod = hasShouldNot ? 'notEqual': 'equal';
+    if(expression.callee.property.name === 'eql' || hasDeepAssertion) {
+      assertMethod = hasShouldNot ? 'notDeepEqual': 'deepEqual';
+    } else {
+      assertMethod = hasShouldNot ? 'notEqual': 'equal';
+    }
 
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
   }
@@ -190,3 +203,41 @@ module.exports = [{
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)})`;
   }
 }];
+},{
+  name: 'expected-dom-specific-assertions',
+  // expect(find('[data-test-id=page-title]')).to.have.attr('href', 'link');
+  // expect(find('[data-test-id=page-title]')).to.have.attribute('aria-label', 'label');
+  // expect(find('[data-test-id=page-title]')).to.not.have.attr('disabled');
+  // expect(find('[data-test-id=page-title]')).to.have.class('text--bold');
+  // expect(find('[data-test-id=page-title]')).to.have.text('input');
+  // expect(find('[data-test-id=page-title]')).to.have.value('input');
+  // expect(find('[data-test-id=page-title]')).to.be.visible;
+  // expect(find('[data-test-id=page-title]')).to.be.disabled;
+  matcher: function(expression) {
+    return (expression.callee && ['attr', 'attribute', 'class', 'text', 'value'].includes(expression.callee.property.name))
+      || (expression.property && ['visible', 'disabled'].includes(expression.property.name));
+  },
+  transformer: function (expression, path, j) {
+
+    var {
+      assertArgument,
+      assertMessage,
+      hasShouldNot,
+      hasSelectorWithoutProperty
+    } = extractExpect(path, j);
+
+    var property = expression.property || expression.callee.property;
+    var assertType = property.name;
+
+    var expectedArguments = expression.arguments;
+
+    if (hasSelectorWithoutProperty) {
+      return constructDomAssertions(j, assertArgument, assertMessage, assertType, hasShouldNot, expectedArguments);
+    } else {
+      // NOTE This is a rare case where they have implemented chaining and then used attr or class for assertion,
+      // For these cases we need to find a solution if present else do it manually
+      return j(expression).toSource();
+    }
+  }
+},
+];
