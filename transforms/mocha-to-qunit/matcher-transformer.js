@@ -202,7 +202,6 @@ module.exports = [{
 
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)})`;
   }
-}];
 },{
   name: 'expected-dom-specific-assertions',
   // expect(find('[data-test-id=page-title]')).to.have.attr('href', 'link');
