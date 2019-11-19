@@ -44,6 +44,7 @@ module('Integration | Component', function(hooks) {
     // Find out if its a dom present case or not present case
     assert.dom('[data-test-id=page-title]').exists({ count: 2 }, '[Message] Multiple elements should be present');
     assert.dom('[data-test-id=page-title]').exists({ count: 1 });
+    assert.dom('[data-test-id=page-title]').exists({ count: 1 });
     assert.dom('[data-test-id=page-title]').exists({ count: 1 }, '[Message] One Element Present'); // With message and length 1
     assert.dom('[data-test-id=page-title]').doesNotExist('[Message] Element not present');
     assert.dom('[data-test-id=page-title]').doesNotExist(); // Without message
@@ -51,6 +52,7 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').exists({ count: titlesLength });
 
     assert.length(pageTitleSelector, 2, 'Assertion Message');
+    assert.length(pageTitleSelector, titlesLength, 'Assertion Message');
     assert.length(pageTitleSelector, titlesLength);
     assert.length(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]'), 2);
     assert.length(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]'), 1);

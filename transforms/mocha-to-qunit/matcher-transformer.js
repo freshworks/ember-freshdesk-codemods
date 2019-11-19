@@ -91,7 +91,7 @@ module.exports = [{
   name: 'expected-length',
   // expect(findAll('[data-test-id=page-title]')).to.have.length(1);
   matcher: function(expression) {
-    return (expression.callee && expression.callee.property.name === 'length');
+    return expression.callee && expression.callee.property.name.includes('length');
   },
   transformer: function (expression, path, j) {
     var { assertArgument, assertArgumentSource, assertMessage, hasSelectorWithoutProperty } = extractExpect(path, j);
