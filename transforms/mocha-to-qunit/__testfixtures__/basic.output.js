@@ -86,6 +86,7 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').doesNotHaveAttribute('disabled', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').isNotDisabled();
     assert.dom('[data-test-id=page-title]').isNotVisible();
+    assert.dom(updateButton).isNotDisabled();
   });
 
   // 'expected-contains'
