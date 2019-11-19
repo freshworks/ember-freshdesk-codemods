@@ -153,4 +153,12 @@ describe('Integration | Component', function() {
     expect(currentDateVar).to.be.a('date');
     expect([1, 2]).to.be.an.instanceof(Array);
   });
+
+  // DeepIncludes
+  it('Contains expects keys, property', function() {
+    expect(model).to.include.all.keys('content', 'products');
+    expect(elementResize(2560, 1600)).to.have.all.keys(2, 3);
+    expect(route.controller).to.have.property('emailToDisplay');
+    expect(requestParams[0],'some message').to.not.have.any.keys('custom_fields');
+  });
 });

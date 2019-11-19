@@ -243,6 +243,7 @@ module.exports = [{
   name: 'expected-a-an',
   // expect().to.be.a;
   // expect().to.be.an;
+  // expect().to.be.instanceOf;
   matcher: function (expression) {
     return (expression.callee && ['a', 'an', 'instanceof'].includes(expression.callee.property.name));
   },
@@ -267,6 +268,20 @@ module.exports = [{
     }
 
     return `assert.instanceOf(${joinParams(assertArgumentType, assertArgumentSource, assertMessage)});`;
+  }
+}, {
+  name: 'expected-keys',
+  // expect(true).to.include.all.keys(true);
+  // expect(true).to.have.keys(true);
+  // expect(true).to.have.property(true);
+  matcher: function(expression) {
+    return (expression.callee && ['keys', 'property'].includes(expression.callee.property.name));
+  },
+  transformer: function (expression, path, j) {
+    let { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
+    let expectedArgument = `[${j(expression.arguments).toSource()}]`;
+    let assertMethod = hasShouldNot ? 'notDeepIncludes': 'deepIncludes';
+    return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
   }
 }
 ];

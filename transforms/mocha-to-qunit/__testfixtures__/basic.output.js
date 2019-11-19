@@ -156,4 +156,12 @@ module('Integration | Component', function(hooks) {
     assert.instanceOf(Date, currentDateVar);
     assert.instanceOf(Array, [1, 2]);
   });
+
+  // DeepIncludes
+  test('Contains expects keys, property', function(assert) {
+    assert.deepIncludes(model, ['content','products']);
+    assert.deepIncludes(elementResize(2560, 1600), [2,3]);
+    assert.deepIncludes(route.controller, ['emailToDisplay']);
+    assert.notDeepIncludes(requestParams[0], ['custom_fields'], 'some message');
+  });
 });
