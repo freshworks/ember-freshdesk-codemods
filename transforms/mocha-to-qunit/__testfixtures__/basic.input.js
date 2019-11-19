@@ -71,6 +71,9 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-title]')).to.contain.text('input');
     expect(find('[data-test-id=page-title]'),'Assertion Message').to.contain.trimmed.text('input');
     expect(find('[data-test-id=page-title]')).to.have.value('input');
+    expect(pageTitleSelector).to.have.attr('href', 'link');
+    expect(pageTitleSelector).to.be.disabled;
+    expect(pageTitleSelector, 'Assertion Message').to.have.text(inputVariable);
 
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.not.have.attr('disabled');
     expect(find('[data-test-id=page-title]')).to.not.be.disabled;

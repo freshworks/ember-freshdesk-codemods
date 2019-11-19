@@ -74,6 +74,9 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').hasText('input');
     assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').hasValue('input');
+    assert.dom(pageTitleSelector).hasAttribute('href', 'link');
+    assert.dom(pageTitleSelector).isDisabled();
+    assert.dom(pageTitleSelector).hasText(inputVariable, 'Assertion Message');
 
     assert.dom('[data-test-id=page-title]').doesNotHaveAttribute('disabled', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').isNotDisabled();
