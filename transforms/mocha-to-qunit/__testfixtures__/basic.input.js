@@ -83,6 +83,7 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.not.have.attr('disabled');
     expect(find('[data-test-id=page-title]')).to.not.be.disabled;
     expect(find('[data-test-id=page-title]')).to.not.be.visible;
+    expect(find(updateButton)).to.be.enabled;
   });
 
   // 'expected-contains'
