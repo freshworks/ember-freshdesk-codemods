@@ -94,17 +94,14 @@ module.exports = [{
     return (expression.callee && expression.callee.property.name === 'length');
   },
   transformer: function (expression, path, j) {
-    var { assertArgument, assertMessage, hasSelectorWithoutProperty } = extractExpect(path, j);
+    var { assertArgument, assertArgumentSource, assertMessage, hasSelectorWithoutProperty } = extractExpect(path, j);
 
-    var existsParam = null;
     var lengthValue = j(expression.arguments[0]).toSource();
-    var domSelector = j(assertArgument.arguments).toSource();
 
     if (hasSelectorWithoutProperty) {
       return constructDomExists(j, assertArgument, assertMessage, lengthValue != 0, lengthValue);
     } else {
-      // NOTE need to handle the length method that is not used for findAll;
-      return j(expression).toSource();
+      return `assert.length(${joinParams(assertArgumentSource, lengthValue, assertMessage)});`;
     }
   }
 }, {

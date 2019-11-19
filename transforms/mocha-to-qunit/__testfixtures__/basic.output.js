@@ -49,11 +49,11 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').doesNotExist(); // Without message
     assert.dom('[data-test-id=page-title]').exists({ count: titles.length }, '[Message] Length Comparison with variable value');
     assert.dom('[data-test-id=page-title]').exists({ count: titlesLength });
-    // expect(pageTitleSelector).to.have.length(2);
-    // expect(pageTitleSelector).to.have.length(titlesLength);
-    // Should handle this edge cases
-    // expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
-    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
+
+    assert.length(pageTitleSelector, 2, 'Assertion Message');
+    assert.length(pageTitleSelector, titlesLength);
+    assert.length(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]'), 2);
+    assert.length(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]'), 1);
 
     // Variations in dom assertions
     assert.dom('[data-test-id=page-title]').exists();
