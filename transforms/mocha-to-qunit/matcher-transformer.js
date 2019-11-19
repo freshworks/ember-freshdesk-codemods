@@ -222,6 +222,7 @@ module.exports = [{
       assertArgument,
       assertMessage,
       hasShouldNot,
+      hasSelector,
       hasSelectorWithoutProperty
     } = extractExpect(path, j);
 
@@ -230,7 +231,7 @@ module.exports = [{
 
     var expectedArguments = expression.arguments;
 
-    if (hasSelectorWithoutProperty) {
+    if (hasSelectorWithoutProperty || !hasSelector) {
       return constructDomAssertions(j, assertArgument, assertMessage, assertType, hasShouldNot, expectedArguments);
     } else {
       // NOTE This is a rare case where they have implemented chaining and then used attr or class for assertion,

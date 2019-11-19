@@ -46,6 +46,8 @@ describe('Integration | Component', function() {
     expect(findAll('[data-test-id=page-title]')).to.have.length(0); // Without message
     expect(findAll('[data-test-id=page-title]'), '[Message] Length Comparison with variable value').to.have.length(titles.length);
     expect(findAll('[data-test-id=page-title]')).to.have.length(titlesLength);
+    // expect(pageTitleSelector).to.have.length(2);
+    // expect(pageTitleSelector).to.have.length(titlesLength);
     // Should handle this edge cases
     // expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
     // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
@@ -71,6 +73,9 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-title]')).to.contain.text('input');
     expect(find('[data-test-id=page-title]'),'Assertion Message').to.contain.trimmed.text('input');
     expect(find('[data-test-id=page-title]')).to.have.value('input');
+    expect(pageTitleSelector).to.have.attr('href', 'link');
+    expect(pageTitleSelector).to.be.disabled;
+    expect(pageTitleSelector, 'Assertion Message').to.have.text(inputVariable);
 
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.not.have.attr('disabled');
     expect(find('[data-test-id=page-title]')).to.not.be.disabled;
@@ -109,6 +114,8 @@ describe('Integration | Component', function() {
     // or assert.dom('selector').doesNotExist(message);
     expect(find('dom-selector'), 'message').to.not.be.null;
     expect(find('dom-selector'), 'message').to.be.null;
+    expect(domSelector, 'message').to.not.be.null;
+    expect(domSelector, 'message').to.be.null;
   });
 
   // 'expected-exists'
@@ -123,6 +130,8 @@ describe('Integration | Component', function() {
     expect(find('dom-selector')).to.exist;
     expect(find('dom-selector'), 'message').to.exist;
     expect(find('dom-selector'), 'message').to.not.exist;
+    expect(domSelector).to.exist;
+    expect(domSelector, 'message').to.not.exist;
   });
 
   // compare assertions

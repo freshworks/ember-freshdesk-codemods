@@ -49,6 +49,8 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').doesNotExist(); // Without message
     assert.dom('[data-test-id=page-title]').exists({ count: titles.length }, '[Message] Length Comparison with variable value');
     assert.dom('[data-test-id=page-title]').exists({ count: titlesLength });
+    // expect(pageTitleSelector).to.have.length(2);
+    // expect(pageTitleSelector).to.have.length(titlesLength);
     // Should handle this edge cases
     // expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
     // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
@@ -74,6 +76,9 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').hasText('input');
     assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').hasValue('input');
+    assert.dom(pageTitleSelector).hasAttribute('href', 'link');
+    assert.dom(pageTitleSelector).isDisabled();
+    assert.dom(pageTitleSelector).hasText(inputVariable, 'Assertion Message');
 
     assert.dom('[data-test-id=page-title]').doesNotHaveAttribute('disabled', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').isNotDisabled();
@@ -112,6 +117,8 @@ module('Integration | Component', function(hooks) {
     // or assert.dom('selector').doesNotExist(message);
     assert.dom('dom-selector').exists('message');
     assert.dom('dom-selector').doesNotExist('message');
+    assert.ok(domSelector, 'message');
+    assert.notOk(domSelector, 'message');
   });
 
   // 'expected-exists'
@@ -126,6 +133,8 @@ module('Integration | Component', function(hooks) {
     assert.dom('dom-selector').exists();
     assert.dom('dom-selector').exists('message');
     assert.dom('dom-selector').doesNotExist('message');
+    assert.ok(domSelector);
+    assert.notOk(domSelector, 'message');
   });
 
   // compare assertions
