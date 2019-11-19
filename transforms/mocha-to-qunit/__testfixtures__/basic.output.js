@@ -119,6 +119,7 @@ module('Integration | Component', function(hooks) {
     assert.dom('dom-selector').doesNotExist('message');
     assert.ok(domSelector, 'message');
     assert.notOk(domSelector, 'message');
+    assert.notOk(subject.get('ticket.customFields.nested_field_item'));
   });
 
   // 'expected-exists'
