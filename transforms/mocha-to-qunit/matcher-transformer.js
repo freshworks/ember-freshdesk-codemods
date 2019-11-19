@@ -275,11 +275,11 @@ module.exports = [{
   // expect(true).to.have.keys(true);
   // expect(true).to.have.property(true);
   matcher: function(expression) {
-    return (expression.callee && ['keys', 'property'].includes(expression.callee.property.name));
+    return (expression.callee && ['keys', 'property', 'members'].includes(expression.callee.property.name));
   },
   transformer: function (expression, path, j) {
     let { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
-    let expectedArgument = `[${j(expression.arguments).toSource()}]`;
+    let expectedArgument = (expression.callee.property.name === 'members') ? j(expression.arguments).toSource() : `[${j(expression.arguments).toSource()}]`;
     let assertMethod = hasShouldNot ? 'notDeepIncludes': 'deepIncludes';
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
   }

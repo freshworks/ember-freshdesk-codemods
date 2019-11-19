@@ -163,5 +163,6 @@ module('Integration | Component', function(hooks) {
     assert.deepIncludes(elementResize(2560, 1600), [2,3]);
     assert.deepIncludes(route.controller, ['emailToDisplay']);
     assert.notDeepIncludes(requestParams[0], ['custom_fields'], 'some message');
+    assert.deepIncludes(this.get('data.company.domains'), fackDomains);
   });
 });
