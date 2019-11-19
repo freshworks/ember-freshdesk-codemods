@@ -108,34 +108,39 @@ module.exports = [{
     }
   }
 }, {
-   name: 'expected-contains-or-includes-or-string',
-   /* expect(result)
-      .to.be.contains,
-      .to.contain,
-      .to.have.contain,
-      .to.be.contain,
-      .to.contains,
-      .to.not.contain,
-      .to.not.contains,
-      .to.includes,
-      .to.not.includes,
-      .to.include,
-      .to.not.include,
-      .to.have.string,
-      .to.not.have.string
-   */
-   matcher: function(expression) {
-     let name = (expression.callee && expression.callee.property.name) || '';
-     return name.includes('contain') || name.includes('include') || name === 'string';
-   },
-   transformer: function (expression, path, j) {
-     var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
-     var expectedArgument = j(expression.arguments).toSource();
+  name: 'expected-contains-or-includes-or-string',
+  /* expect(result)
+     .to.be.contains,
+     .to.contain,
+     .to.be.oneOf,
+     .to.not.be.oneOf,
+     .to.have.contain,
+     .to.be.contain,
+     .to.contains,
+     .to.not.contain,
+     .to.not.contains,
+     .to.includes,
+     .to.not.includes,
+     .to.include,
+     .to.not.include,
+     .to.have.string,
+     .to.not.have.string
+  */
+  matcher: function(expression) {
+    let name = (expression.callee && expression.callee.property.name) || '';
+    return ['contain', 'contains', 'include', 'includes', 'string', 'oneOf'].includes(name);
+  },
+  transformer: function (expression, path, j) {
+    var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
+    var expectedArgument = j(expression.arguments).toSource();
 
-     var assertMethod = hasShouldNot ? 'notIncludes' : 'includes';
+    var assertMethod = hasShouldNot ? 'notIncludes' : 'includes';
+    var assertArguments = (expression.callee.property.name === 'oneOf')
+                          ? joinParams(expectedArgument, assertArgumentSource, assertMessage)
+                          : joinParams(assertArgumentSource, expectedArgument, assertMessage);
 
-     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
-   }
+    return `assert.${assertMethod}(${assertArguments});`;
+  }
 }, {
   name: 'expected-lt-lte-below-gt-gte-above',
   /* expect()

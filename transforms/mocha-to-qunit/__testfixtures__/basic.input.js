@@ -96,6 +96,7 @@ describe('Integration | Component', function() {
     expect([1, 2]).to.be.include(2);
     expect([1, 2]).to.be.includes(2);
     expect('Message has input').to.have.string('input');
+    expect(i.name).to.be.oneOf(['name', 'customFields.custom_company_text_field']);
     // Should handle this edge cases
     // expect(options).to.be.an('array').to.not.include(serviceTaskType);
 
