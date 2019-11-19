@@ -44,6 +44,8 @@ describe('Integration | Component', function() {
     expect(findAll('[data-test-id=page-title]'), '[Message] One Element Present').to.have.length(1); // With message and length 1
     expect(findAll('[data-test-id=page-title]'), '[Message] Element not present').to.have.length(0);
     expect(findAll('[data-test-id=page-title]')).to.have.length(0); // Without message
+    expect(findAll('[data-test-id=page-title]'), '[Message] Length Comparison with variable value').to.have.length(titles.length);
+    expect(findAll('[data-test-id=page-title]')).to.have.length(titlesLength);
     // Should handle this edge cases
     // expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
     // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
@@ -128,7 +130,7 @@ describe('Integration | Component', function() {
     expect(1).to.be.below(2);
     expect(2, 'assert message').to.be.lt(3);
     expect(2).to.be.lte(2);
-    
+
     expect(1).to.be.above(2);
     expect(2, 'assert message').to.be.gt(3);
     expect(2).to.be.gte(2);

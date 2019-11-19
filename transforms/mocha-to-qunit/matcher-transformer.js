@@ -53,7 +53,7 @@ module.exports = [{
     }
 
     if (hasSelectorWithoutProperty) {
-      return constructDomExists(j, assertArgument, assertMessage, !hasShouldNot, 1);
+      return constructDomExists(j, assertArgument, assertMessage, !hasShouldNot, undefined);
     } else {
       var assertMethod = hasShouldNot ? 'notOk' : 'ok';
       return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
@@ -79,7 +79,7 @@ module.exports = [{
 
      if (hasSelectorWithoutProperty) {
        // not.be.null will be dom exists assertion hence hasShouldNot
-       return constructDomExists(j, assertArgument, assertMessage, hasShouldNot, 1);
+       return constructDomExists(j, assertArgument, assertMessage, hasShouldNot, undefined);
      } else {
        var assertMethod = hasShouldNot ? 'ok': 'notOk';
        return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
@@ -123,11 +123,11 @@ module.exports = [{
     var { assertArgument, assertMessage, hasSelectorWithoutProperty } = extractExpect(path, j);
 
     var existsParam = null;
-    var lengthValue = expression.arguments[0].value;
+    var lengthValue = j(expression.arguments[0]).toSource();
     var domSelector = j(assertArgument.arguments).toSource();
 
     if (hasSelectorWithoutProperty) {
-      return constructDomExists(j, assertArgument, assertMessage, (lengthValue > 0), lengthValue);
+      return constructDomExists(j, assertArgument, assertMessage, lengthValue != 0, lengthValue);
     } else {
       // NOTE need to handle the length method that is not used for findAll;
       return j(expression).toSource();
@@ -252,7 +252,7 @@ module.exports = [{
     } = extractExpect(path, j);
     let expectedArgument = expression.arguments[0].value || expression.arguments[0].name.toLowerCase();
     let assertArgumentType;
-    
+
     switch(expectedArgument) {
       case 'array':
         assertArgumentType = `Array`;
