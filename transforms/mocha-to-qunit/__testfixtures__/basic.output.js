@@ -1,5 +1,5 @@
 import { module, test } from 'qunit';
-import { find } from '@ember/test-helpers';
+import { find, findAll } from '@ember/test-helpers';
 import {
   setupTest,
   setupWindowMock,
@@ -146,6 +146,7 @@ module('Integration | Component', function(hooks) {
     assert.gt(1, 2);
     assert.gt(2, 3, 'assert message');
     assert.gte(2, 2);
+    assert.gte(findAll('.ember-power-select-option').length, 1);
   });
 
   // type check
