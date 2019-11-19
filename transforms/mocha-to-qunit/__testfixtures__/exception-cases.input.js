@@ -1,6 +1,9 @@
 import { expect } from 'chai';
 import { describe, it, context } from 'mocha';
 import { setupTest, setupWindowMock, setupApplicationTest } from '@freshdesk/test-helpers';
+import { faker } from 'ember-cli-mirage';
+
+let name = faker.name.firstName();
 
 describe('Integration | Component', function() {
   let hooks = setupApplicationTest();
@@ -13,20 +16,27 @@ describe('Integration | Component', function() {
       // Testing for beforeEach with hooks
     });
 
-    it('basic negative expect statements', function() {
+    it('basic negative expect statements', async function() {
       expect(false).to.not.be.true;
       expect(false, 'Message').to.not.be.true;
       expect(true).to.not.be.false;
       expect(true, 'Message').to.not.be.false;
       expect(1).to.not.equal(2);
-      expect(1, 'Message').to.not.equal(2);
+      await expect(1, 'Message').to.not.equal(2);
 
       expect('Test', 'Message').to.not.be.ok;
       expect('Test', 'not empty assertion').to.not.be.empty;
 
       // Variations in dom assertions
-      expect(find('[data-test-id=page-title]')).to.be.not.ok;
-      expect(findAll('[data-test-id=page-title]')).to.not.be.empty;
+      await expect(find('[data-test-id=page-title]')).to.be.not.ok;
+
+      return expect(findAll('[data-test-id=page-title]')).to.not.be.empty;
+    });
+
+    it('Method with return expression', function() {
+      return wait(() => {
+        expect(findAll('[data-test-id=page-title]')).to.not.be.empty;
+      });
     });
   });
 
@@ -40,7 +50,7 @@ describe('Integration | Component', function() {
       // Testing for afterEach without hooks attribute
     });
 
-    it('Expect within a nested block', function() {
+    it('Expect within a nested block', function(done) {
       // Comment
       [true, true].forEach((key) => {
         // Inner Comment
@@ -51,6 +61,9 @@ describe('Integration | Component', function() {
         // Inner Comment
         expect(item).to.be.true;
       });
+
+      // Will this be a problem
+      done();
     });
   });
 });
