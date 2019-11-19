@@ -23,10 +23,14 @@ const {
 // [ ] Take a sample batch of 50 and migrate them to qunit using some simple code-mods.
 // [X] Refactor to a mapper to determine what type of assertion and what type of transform.
 // [X] Clean up unused imports sych as context, findAll.
-// [ ] There are some tests which have an expect as the return statements and also having await methods infront of it.
 // [X] Migrate context to module and add hooks.
 // [X] If a describe or a context is skipped then all the tests within the specifc module needs to be skipped and added as an import to qunit
 // [ ] Clean up any beforeEach and afterEach called directly form mocha.
+//
+// Known issues
+// [ ] There are some tests which have an expect as the return statements and also having await methods infront of it.
+// [ ] Mocha's done callback needs to be removed if present.
+// [ ] Faker is getting removed from the tests. need to analyse why.
 
 module.exports = function transformer(file, api) {
   const j = getParser(api);
@@ -141,32 +145,72 @@ module.exports = function transformer(file, api) {
     return (findExpect(path, j).length > 0);
   }
 
+  function removeDoneMethod(path) {
+    j(path).find(j.ExpressionStatement)
+      .filter((path) => {
+        return (j(path).find(j.Identifier, { name: 'done' }).length > 0);
+      }).remove();
+  }
+
   function transformerTests(path) {
     if(pathHasExpects(path)) {
       path.node.params = ['assert'];
+      removeDoneMethod(path);
     }
 
-    j(path).find(j.ExpressionStatement)
-      .filter(pathHasExpects)
-      .filter(filterOnlyFunctions)
+    filterExpressions(j(path).find(j.ExpressionStatement))
       .forEach(transformExpect);
+
+    filterExpressions(j(path).find(j.ReturnStatement))
+      .forEach(returnExtraction);
   }
 
-  function transformExpect(path) {
-    let expression = runMacherTranformer(path);
-    let newNode = j(expression).find(j.ExpressionStatement).get();
+  function filterExpressions(graphTree) {
+    return graphTree
+      .filter(pathHasExpects)
+      .filter(filterOnlyFunctions)
+  }
+
+  function returnExtraction(path) {
+    var node = path.node.argument;
+    var expression = runMacherTranformer(path.node.argument, path);
+    var newNode = j(expression).find(j.ExpressionStatement).get();
+    path.node.argument = newNode.value.expression;
+  }
+
+  function memberAndCallExtraction(path) {
+    var expression = runMacherTranformer(path.node.expression, path);
+    var newNode = j(expression).find(j.ExpressionStatement).get();
     path.node.expression = newNode.value.expression;
   }
 
-  function runMacherTranformer(path) {
-    var matchedExpression = j(path.node.expression).toSource();
+  function awaitExtraction(path) {
+    var expression = runMacherTranformer(path.node.expression.argument, path);
+    var newNode = j(expression).find(j.ExpressionStatement).get();
+    path.node.expression.argument = newNode.value.expression;
+  }
+
+  function transformExpect(path) {
+    switch (path.node.expression.type) {
+      case 'CallExpression':
+      case 'MemberExpression':
+        memberAndCallExtraction(path);
+      return;
+      case 'AwaitExpression':
+        awaitExtraction(path);
+      return;
+    }
+  }
+
+  function runMacherTranformer(expression, path) {
+    var matchedExpression = j(expression).toSource();
     var BreakException = {};
 
     try {
       matcherTransformer
         .forEach(({ name, matcher, transformer }) => {
-          if (matcher(path.node.expression, path, j, root)) {
-            matchedExpression = transformer(path.node.expression, path, j, root);
+          if (matcher(expression, path, j, root)) {
+            matchedExpression = transformer(expression, path, j, root);
             throw BreakException;
           }
         });

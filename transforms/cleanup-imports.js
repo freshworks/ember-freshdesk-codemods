@@ -5,7 +5,7 @@ function removeUnusedImportSpecifiers(j, root) {
       let identifierPresent = root.find(j.Identifier, {
           name: importName
         })
-        .filter((path) => (path.name === 'callee'))
+        .filter((path) => (path.name !== 'local' && path.name !== 'imported'))
 
       return (identifierPresent.length === 0);
     }).remove();

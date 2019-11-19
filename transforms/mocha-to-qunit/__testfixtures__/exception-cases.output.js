@@ -4,6 +4,9 @@ import {
   setupWindowMock,
   setupApplicationTest
 } from '@freshdesk/test-helpers';
+import { faker } from 'ember-cli-mirage';
+
+let name = faker.name.firstName();
 
 module('Integration | Component', function(hooks) {
   setupApplicationTest(hooks);
@@ -16,20 +19,27 @@ module('Integration | Component', function(hooks) {
       // Testing for beforeEach with hooks
     });
 
-    test('basic negative expect statements', function(assert) {
+    test('basic negative expect statements', async function(assert) {
       assert.notEqual(false, true);
       assert.notEqual(false, true, 'Message');
       assert.notEqual(true, false);
       assert.notEqual(true, false, 'Message');
       assert.notEqual(1, 2);
-      assert.notEqual(1, 2, 'Message');
+      await assert.notEqual(1, 2, 'Message');
 
       assert.notOk('Test', 'Message');
       assert.ok('Test', 'not empty assertion');
 
       // Variations in dom assertions
-      assert.dom('[data-test-id=page-title]').doesNotExist();
-      assert.dom('[data-test-id=page-title]').exists();
+      await assert.dom('[data-test-id=page-title]').doesNotExist();
+
+      return assert.dom('[data-test-id=page-title]').exists();
+    });
+
+    test('Method with return expression', function(assert) {
+      return wait(() => {
+        assert.dom('[data-test-id=page-title]').exists();
+      });
     });
   });
 
