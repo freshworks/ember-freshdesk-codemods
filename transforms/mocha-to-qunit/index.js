@@ -67,7 +67,7 @@ module.exports = function transformer(file, api) {
   transformSkippedTests(j, root);
 
   root.find(j.FunctionExpression)
-    .filter((path) => ['test', 'skip'].includes(path.parent.node.callee.name))
+    .filter((path) => path.parent.node.callee && ['test', 'skip'].includes(path.parent.node.callee.name))
     .forEach(transformerTests);
 
   cleanupImports(j, root);
