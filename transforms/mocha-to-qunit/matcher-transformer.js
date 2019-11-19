@@ -261,5 +261,18 @@ module.exports = [{
     let assertMethod = hasShouldNot ? 'notDeepIncludes': 'deepIncludes';
     return `assert.${assertMethod}(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
   }
+}, {
+  name: 'expected-throws',
+  // expect(function).to.throw(error);
+  matcher: function(expression) {
+    return (expression.callee && expression.callee.property.name === 'throw');
+  },
+  transformer: function (expression, path, j) {
+    var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
+    var expectedArgument = j(expression.arguments).toSource();
+    let assertMethod = (hasShouldNot) ? 'ok' : 'throws';
+    let assertArgs = (hasShouldNot) ? joinParams(assertArgumentSource, assertMessage) : joinParams(assertArgumentSource, expectedArgument, assertMessage);
+    return `assert.${assertMethod}(${assertArgs});`;
+  }
 }
 ];

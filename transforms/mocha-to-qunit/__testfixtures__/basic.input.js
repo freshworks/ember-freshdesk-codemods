@@ -168,4 +168,11 @@ describe('Integration | Component', function() {
     expect(requestParams[0],'some message').to.not.have.any.keys('custom_fields');
     expect(this.get('data.company.domains')).to.have.members(fackDomains);
   });
+
+  // Throws
+  it('Contains expects throw', function() {
+    expect(result).to.throw();
+    expect(result).to.throw(customError);
+    expect(fn1).to.not.throw(Error);
+  });
 });

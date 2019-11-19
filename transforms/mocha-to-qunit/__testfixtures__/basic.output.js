@@ -171,4 +171,11 @@ module('Integration | Component', function(hooks) {
     assert.notDeepIncludes(requestParams[0], ['custom_fields'], 'some message');
     assert.deepIncludes(this.get('data.company.domains'), fackDomains);
   });
+
+  // Throws
+  test('Contains expects throw', function(assert) {
+    assert.throws(result);
+    assert.throws(result, customError);
+    assert.ok(fn1);
+  });
 });

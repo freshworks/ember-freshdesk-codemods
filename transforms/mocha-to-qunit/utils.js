@@ -1,5 +1,5 @@
 function hasValue(value) {
-  return !(typeof (value) === 'undefined' || value === null || value === '');
+  return !(typeof (value) === 'undefined' || value === null || value === '' || value.length === 0);
 }
 
 function joinParams(...params) {
