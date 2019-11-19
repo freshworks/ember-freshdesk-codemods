@@ -99,6 +99,7 @@ module('Integration | Component', function(hooks) {
     assert.includes([1, 2], 2);
     assert.includes([1, 2], 2);
     assert.includes('Message has input', 'input');
+    assert.includes(['name', 'customFields.custom_company_text_field'], i.name);
     // Should handle this edge cases
     // expect(options).to.be.an('array').to.not.include(serviceTaskType);
 
