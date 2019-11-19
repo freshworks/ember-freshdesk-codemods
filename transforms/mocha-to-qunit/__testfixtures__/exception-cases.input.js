@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { describe, it, context } from 'mocha';
 import { setupTest, setupWindowMock, setupApplicationTest } from '@freshdesk/test-helpers';
 import { faker } from 'ember-cli-mirage';
+import { run } from '@ember/runloop';
 
 let name = faker.name.firstName();
 
@@ -34,6 +35,15 @@ describe('Integration | Component', function() {
     });
 
     it('Method with return expression', function() {
+      run.later(() => {
+        try {
+          expect(scrollSpy.calledOnce).to.be.true;
+          done();
+        } catch(err) {
+          done(err);
+        }
+      }, 100);
+
       return wait(() => {
         expect(findAll('[data-test-id=page-title]')).to.not.be.empty;
       });

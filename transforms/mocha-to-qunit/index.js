@@ -146,10 +146,9 @@ module.exports = function transformer(file, api) {
   }
 
   function removeDoneMethod(path) {
-    j(path).find(j.ExpressionStatement)
-      .filter((path) => {
-        return (j(path).find(j.Identifier, { name: 'done' }).length > 0);
-      }).remove();
+    j(path).find(j.Identifier, { name: 'done' })
+      .closest(j.CallExpression)
+      .remove();
   }
 
   function transformerTests(path) {

@@ -5,6 +5,7 @@ import {
   setupApplicationTest
 } from '@freshdesk/test-helpers';
 import { faker } from 'ember-cli-mirage';
+import { run } from '@ember/runloop';
 
 let name = faker.name.firstName();
 
@@ -37,6 +38,12 @@ module('Integration | Component', function(hooks) {
     });
 
     test('Method with return expression', function(assert) {
+      run.later(() => {
+        try {
+          assert.equal(scrollSpy.calledOnce, true);
+        } catch(err) {}
+      }, 100);
+
       return wait(() => {
         assert.dom('[data-test-id=page-title]').exists();
       });
