@@ -268,10 +268,11 @@ module.exports = [{
     return (expression.callee && expression.callee.property.name === 'throw');
   },
   transformer: function (expression, path, j) {
-    var { assertArgumentSource, assertMessage } = extractExpect(path, j);
+    var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
     var expectedArgument = j(expression.arguments).toSource();
-
-    return `assert.throws(${joinParams(assertArgumentSource, expectedArgument, assertMessage)});`;
+    let assertMethod = (hasShouldNot) ? 'ok' : 'throws';
+    let assertArgs = (hasShouldNot) ? joinParams(assertArgumentSource, assertMessage) : joinParams(assertArgumentSource, expectedArgument, assertMessage);
+    return `assert.${assertMethod}(${assertArgs});`;
   }
 }
 ];

@@ -176,5 +176,6 @@ module('Integration | Component', function(hooks) {
   test('Contains expects throw', function(assert) {
     assert.throws(result);
     assert.throws(result, customError);
+    assert.ok(fn1);
   });
 });

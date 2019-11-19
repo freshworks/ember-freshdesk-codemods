@@ -173,5 +173,6 @@ describe('Integration | Component', function() {
   it('Contains expects throw', function() {
     expect(result).to.throw();
     expect(result).to.throw(customError);
+    expect(fn1).to.not.throw(Error);
   });
 });
