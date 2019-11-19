@@ -189,7 +189,7 @@ module.exports = [{
   // expect(find('[data-test-id=page-title]')).to.be.visible;
   // expect(find('[data-test-id=page-title]')).to.be.disabled;
   matcher: function(expression) {
-    return (expression.callee && ['attr', 'attribute', 'class', 'text', 'value'].includes(expression.callee.property.name))
+    return (expression.callee && ['attr', 'attribute', 'class', 'text', 'value', 'prop'].includes(expression.callee.property.name))
       || (expression.property && ['visible', 'disabled'].includes(expression.property.name));
   },
   transformer: function (expression, path, j) {

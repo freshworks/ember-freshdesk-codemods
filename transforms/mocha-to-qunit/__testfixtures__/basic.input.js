@@ -74,6 +74,7 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-title]'),'Assertion Message').to.contain.trimmed.text('input');
     expect(find('[data-test-id=page-title]')).to.have.value('input');
     expect(pageTitleSelector).to.have.attr('href', 'link');
+    expect(find(prev_button), 'Validating Previous button').to.have.prop('disabled');
     expect(pageTitleSelector).to.be.disabled;
     expect(pageTitleSelector, 'Assertion Message').to.have.text(inputVariable);
 

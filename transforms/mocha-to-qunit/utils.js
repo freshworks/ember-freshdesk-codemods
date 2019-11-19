@@ -11,6 +11,7 @@ function getQunitDomAssertType(assertType, hasShouldNot) {
     positive: {
       attr: 'hasAttribute',
       attribute: 'hasAttribute',
+      prop: 'hasAttribute',
       class: 'hasClass',
       text: 'hasText',
       visible: 'isVisible',
@@ -20,6 +21,7 @@ function getQunitDomAssertType(assertType, hasShouldNot) {
     negative: {
       attr: 'doesNotHaveAttribute',
       attribute: 'doesNotHaveAttribute',
+      prop: 'doesNotHaveAttribute',
       class: 'doesNotHaveClass',
       visible: 'isNotVisible',
       disabled: 'isNotDisabled'
