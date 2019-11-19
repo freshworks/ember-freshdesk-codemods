@@ -173,7 +173,7 @@ module.exports = [{
     .to.be.above
   */
   matcher: function (expression) {
-    return expression.callee && ['lt', 'below', 'lte', 'gt', 'above', 'gte'].includes(expression.callee.property.name);
+    return expression.callee && ['lt', 'below', 'lte', 'gt', 'above', 'gte', 'least', 'most'].includes(expression.callee.property.name);
   },
   transformer: function (expression, path, j) {
     var {
@@ -193,9 +193,11 @@ module.exports = [{
         assertMethod = `gt`;
         break;
       case 'lte':
+      case 'most':
         assertMethod = `lte`;
         break;
       case 'gte':
+      case 'least':
         assertMethod = `gte`;
         break;
     }

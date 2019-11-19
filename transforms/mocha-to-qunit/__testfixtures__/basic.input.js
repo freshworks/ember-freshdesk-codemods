@@ -143,6 +143,7 @@ describe('Integration | Component', function() {
     expect(1).to.be.above(2);
     expect(2, 'assert message').to.be.gt(3);
     expect(2).to.be.gte(2);
+    expect(findAll('.ember-power-select-option').length).to.be.at.least(1);
   });
 
   // type check
