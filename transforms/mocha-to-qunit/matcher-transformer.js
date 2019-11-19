@@ -37,7 +37,7 @@ module.exports = [{
     .to.be.undefined
   */
   matcher: function (expression) {
-    return expression.property && ['ok', 'empty', 'exist', 'present', 'undefined'].includes(expression.property.name);
+    return expression.property && ['ok', 'empty', 'exist', 'present', 'undefined', 'null', 'nil'].includes(expression.property.name);
   },
   transformer: function (expression, path, j) {
     var {
@@ -48,7 +48,7 @@ module.exports = [{
       hasSelectorWithoutProperty
     } = extractExpect(path, j);
 
-    if(['empty', 'undefined'].includes(expression.property.name)) {
+    if(['empty', 'undefined', 'null', 'nil'].includes(expression.property.name)) {
       hasShouldNot = !hasShouldNot;
     }
 
@@ -59,32 +59,6 @@ module.exports = [{
       return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
     }
   }
-}, {
-   name: 'expected-null',
-   /* expect(result)
-      .to.be.null,
-      .to.not.null
-   */
-   matcher: function(expression) {
-     return (expression.property && expression.property.name === 'null');
-   },
-   transformer: function (expression, path, j) {
-     var {
-       assertArgumentSource,
-       assertArgument,
-       assertMessage,
-       hasShouldNot,
-       hasSelectorWithoutProperty
-     } = extractExpect(path, j);
-
-     if (hasSelectorWithoutProperty) {
-       // not.be.null will be dom exists assertion hence hasShouldNot
-       return constructDomExists(j, assertArgument, assertMessage, hasShouldNot, undefined);
-     } else {
-       var assertMethod = hasShouldNot ? 'ok': 'notOk';
-       return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
-     }
-   }
 }, {
   name: 'expected-equal',
   // expect(true)

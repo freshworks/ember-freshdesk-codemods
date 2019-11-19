@@ -116,6 +116,7 @@ describe('Integration | Component', function() {
     expect(find('dom-selector'), 'message').to.be.null;
     expect(domSelector, 'message').to.not.be.null;
     expect(domSelector, 'message').to.be.null;
+    expect(subject.get('ticket.customFields.nested_field_item')).to.be.nil;
   });
 
   // 'expected-exists'
