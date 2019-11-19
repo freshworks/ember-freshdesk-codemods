@@ -41,16 +41,18 @@ describe('Integration | Component', function() {
     // Find out if its a dom present case or not present case
     expect(findAll('[data-test-id=page-title]'), '[Message] Multiple elements should be present').to.have.length(2);
     expect(findAll('[data-test-id=page-title]')).to.have.length(1);
+    expect(findAll('[data-test-id=page-title]')).to.have.lengthOf(1);
     expect(findAll('[data-test-id=page-title]'), '[Message] One Element Present').to.have.length(1); // With message and length 1
     expect(findAll('[data-test-id=page-title]'), '[Message] Element not present').to.have.length(0);
     expect(findAll('[data-test-id=page-title]')).to.have.length(0); // Without message
     expect(findAll('[data-test-id=page-title]'), '[Message] Length Comparison with variable value').to.have.length(titles.length);
     expect(findAll('[data-test-id=page-title]')).to.have.length(titlesLength);
-    // expect(pageTitleSelector).to.have.length(2);
-    // expect(pageTitleSelector).to.have.length(titlesLength);
-    // Should handle this edge cases
-    // expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
-    // expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
+
+    expect(pageTitleSelector, 'Assertion Message').to.have.length(2);
+    expect(pageTitleSelector, 'Assertion Message').to.have.lengthOf(titlesLength);
+    expect(pageTitleSelector).to.have.length(titlesLength);
+    expect(find('[data-test-id=page-titles]').querySelectorAll('[data-test-id=page-title]')).to.have.length(2);
+    expect(find('[data-test-id=page-titles]').querySelector('[data-test-id=page-title]')).to.have.length(1);
 
     // Variations in dom assertions
     expect(find('[data-test-id=page-title]')).to.be.ok;
