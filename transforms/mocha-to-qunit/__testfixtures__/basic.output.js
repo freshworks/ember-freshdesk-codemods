@@ -77,6 +77,7 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').hasValue('input');
     assert.dom(pageTitleSelector).hasAttribute('href', 'link');
+    assert.dom(prev_button).hasAttribute('disabled', 'Validating Previous button');
     assert.dom(pageTitleSelector).isDisabled();
     assert.dom(pageTitleSelector).hasText(inputVariable, 'Assertion Message');
 
