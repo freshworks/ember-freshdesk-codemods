@@ -1,7 +1,7 @@
-# ember-codemods
+# ember-freshdesk-codemods
 
 
-A collection of codemod's for ember-codemods.
+A collection of codemods by Freshworks.
 
 ## Usage
 
@@ -20,8 +20,9 @@ ember-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 
 <!--TRANSFORMS_START-->
 * [insert-hooks](transforms/insert-hooks/README.md)
+* [mocha-to-qunit](transforms/mocha-to-qunit/README.md)
 * [modify-import](transforms/modify-import/README.md)
-* [remove-features](transforms/remove-features/README.md)
+* [setup-helpers-with-await](transforms/setup-helpers-with-await/README.md)
 <!--TRANSFORMS_END-->
 
 ## Contributing

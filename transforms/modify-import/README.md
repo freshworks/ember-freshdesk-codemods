@@ -27,6 +27,7 @@ ember-codemods modify-import path/of/files/ or/some**/*glob.js
 **Input** (<small>[basic-imports.input.js](transforms/modify-import/__testfixtures__/basic-imports.input.js)</small>):
 ```js
 import { describe, it } from 'mocha';
+import setupAcceptance from 'freshdesk/tests/helpers/setup-acceptance';
 import {
   addFeatures,
   addLaunched,
@@ -48,6 +49,7 @@ describe('Some test', function() {
 **Output** (<small>[basic-imports.output.js](transforms/modify-import/__testfixtures__/basic-imports.output.js)</small>):
 ```js
 import { describe, it } from 'mocha';
+
 import {
   addAbilities,
   addFeatures,
@@ -56,6 +58,7 @@ import {
   removeAbilities,
   removeFeatures,
   spyFlashMessage,
+  setupAcceptance,
 } from '@freshdesk/test-helpers';
 
 describe('Some test', function() {
