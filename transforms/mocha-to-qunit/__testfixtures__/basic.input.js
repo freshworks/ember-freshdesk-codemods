@@ -102,13 +102,24 @@ describe('Integration | Component', function() {
     expect(i.name).to.be.oneOf(['name', 'customFields.custom_company_text_field']);
     // Should handle this edge cases
     // expect(options).to.be.an('array').to.not.include(serviceTaskType);
-
     // Not contains
     expect('Message').to.not.contain('input');
     expect('Message', 'Assertions Message').to.not.contains('input');
     expect('Message').to.not.include('input');
     expect('Message', 'Assertions Message').to.not.includes('input');
     expect('Message').to.not.have.string('input');
+  });
+
+  // expected-closeto
+  it('Contains expects expected-match', function () {
+    expect(165, 'check whether the given number exists within the provided delta').to.be.closeTo(168, 3);
+    expect(2.5).to.be.closeTo(2, 0.5);
+  });
+
+  // expected-match
+  it('Contains expects expected-match', function () {
+    expect('Message-1234-message', 'String should match the regex').to.be.match(/[a-zA-Z]+-\d+-[a-zA-Z]/);
+    expect('1234-message', 'String should not match the regex').to.not.match(/[a-zA-Z]+-\d+-[a-zA-Z]/);
   });
 
   // 'expected-null'

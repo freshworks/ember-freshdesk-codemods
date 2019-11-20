@@ -60,6 +60,40 @@ module.exports = [{
     }
   }
 }, {
+    name: 'expected-match',
+    /* expect(result)
+       .to.be.match
+       .to.not.match
+    */
+    matcher: function (expression) {
+      let name = (expression.callee && expression.callee.property.name) || '';
+      return name === 'match';
+    },
+    transformer: function (expression, path, j) {
+      var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
+      var expectedArgument = j(expression.arguments).toSource();
+      var assertMethod = hasShouldNot ? 'notMatch' : 'match';
+      var assertArguments = joinParams(assertArgumentSource, expectedArgument, assertMessage);
+
+      return `assert.${assertMethod}(${assertArguments});`;
+    }
+}, {
+    name: 'expected-closeto',
+    /* expect(result)
+       .to.be.closeTo
+    */
+    matcher: function (expression) {
+      let name = (expression.callee && expression.callee.property.name) || '';
+      return name === 'closeTo';
+    },
+    transformer: function (expression, path, j) {
+      var { assertArgumentSource, assertMessage } = extractExpect(path, j);
+      var expectedArgument = j(expression.arguments).toSource();
+      var assertArguments = joinParams(assertArgumentSource, ...expectedArgument, assertMessage);
+
+      return `assert.closeTo(${assertArguments});`;
+    }
+}, {
   name: 'expected-equal',
   // expect(true)
   //  .to.equal(true);
