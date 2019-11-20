@@ -274,5 +274,17 @@ module.exports = [{
     let assertArgs = (hasShouldNot) ? joinParams(assertArgumentSource, assertMessage) : joinParams(assertArgumentSource, expectedArgument, assertMessage);
     return `assert.${assertMethod}(${assertArgs});`;
   }
+}, {
+  name: 'expected-called',
+  // expect(spy()).to.have.been.called;
+  matcher: function(expression) {
+    return (expression.property && expression.property.name === 'called');
+  },
+  transformer: function (expression, path, j) {
+    var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
+    let selector = `${assertArgumentSource}.called`;
+    let assertArgs = joinParams(selector, !hasShouldNot, assertMessage);
+    return `assert.equal(${assertArgs});`;
+  }
 }
 ];

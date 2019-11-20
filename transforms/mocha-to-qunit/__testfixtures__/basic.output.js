@@ -179,4 +179,16 @@ module('Integration | Component', function(hooks) {
     assert.throws(result, customError);
     assert.ok(fn1);
   });
+
+  // Called
+  test('Contains expects called', function(assert) {
+    assert.equal(sinon.spy().called, true, 'Assertion Message');
+    assert.equal(resultSpy.called, true);
+    assert.equal(sinon.spy(component.get('marketplace').trigger('click_ticket')).called, true);
+    assert.equal(component.resultSpy.called, true);
+    assert.equal(route.flashMessages.danger.called, true);
+    assert.equal(get(telephony, 'marketplace').publishEvent.called, true);
+
+    assert.equal(sinon.spy().called, false);
+  });
 });
