@@ -187,4 +187,16 @@ describe('Integration | Component', function() {
     expect(result).to.throw(customError);
     expect(fn1).to.not.throw(Error);
   });
+
+  // Called
+  it('Contains expects called', function() {
+    expect(sinon.spy(), 'Assertion Message').to.have.been.called;
+    expect(resultSpy).to.have.been.called;
+    expect(sinon.spy(component.get('marketplace').trigger('click_ticket'))).to.have.been.called;
+    expect(component.resultSpy).to.have.been.called;
+    expect(route.flashMessages.danger).to.have.been.called;
+    expect(get(telephony, 'marketplace').publishEvent).to.have.been.called;
+
+    expect(sinon.spy()).to.not.have.been.called;
+  });
 });
