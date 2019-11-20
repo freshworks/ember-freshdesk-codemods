@@ -110,6 +110,12 @@ describe('Integration | Component', function() {
     expect('Message').to.not.have.string('input');
   });
 
+  // expected-closeto
+  it('Contains expects expected-match', function () {
+    expect(165, 'check whether the given number exists within the provided delta').to.be.closeTo(168, 3);
+    expect(2.5).to.be.closeTo(2, 0.5);
+  });
+
   // expected-match
   it('Contains expects expected-match', function () {
     expect('Message-1234-message', 'String should match the regex').to.be.match(/[a-zA-Z]+-\d+-[a-zA-Z]/);

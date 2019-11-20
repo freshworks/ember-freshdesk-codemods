@@ -113,6 +113,12 @@ module('Integration | Component', function(hooks) {
     assert.notIncludes('Message', 'input');
   });
 
+  // expected-closeto
+  test('Contains expects expected-match', function(assert) {
+    assert.closeTo(165, 168, 3, 'check whether the given number exists within the provided delta');
+    assert.closeTo(2.5, 2, 0.5);
+  });
+
   // expected-match
   test('Contains expects expected-match', function(assert) {
     assert.match('Message-1234-message', /[a-zA-Z]+-\d+-[a-zA-Z]/, 'String should match the regex');
