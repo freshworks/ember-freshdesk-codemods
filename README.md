@@ -8,12 +8,12 @@ A collection of codemods by Freshworks.
 To run a specific codemod from this project, you would run the following:
 
 ```
-npx ember-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
+npx ember-freshdesk-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 
 # or
 
-yarn global add ember-codemods
-ember-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
+yarn global add ember-freshdesk-codemods
+ember-freshdesk-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 ```
 
 ## Transforms
