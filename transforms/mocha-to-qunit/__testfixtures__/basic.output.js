@@ -105,13 +105,18 @@ module('Integration | Component', function(hooks) {
     assert.includes(['name', 'customFields.custom_company_text_field'], i.name);
     // Should handle this edge cases
     // expect(options).to.be.an('array').to.not.include(serviceTaskType);
-
     // Not contains
     assert.notIncludes('Message', 'input');
     assert.notIncludes('Message', 'input', 'Assertions Message');
     assert.notIncludes('Message', 'input');
     assert.notIncludes('Message', 'input', 'Assertions Message');
     assert.notIncludes('Message', 'input');
+  });
+
+  // expected-match
+  test('Contains expects expected-match', function(assert) {
+    assert.match('Message-1234-message', /[a-zA-Z]+-\d+-[a-zA-Z]/, 'String should match the regex');
+    assert.notMatch('1234-message', /[a-zA-Z]+-\d+-[a-zA-Z]/, 'String should not match the regex');
   });
 
   // 'expected-null'
