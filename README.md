@@ -19,6 +19,7 @@ ember-freshdesk-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 ## Transforms
 
 <!--TRANSFORMS_START-->
+* [async-leaks](transforms/async-leaks/README.md)
 * [insert-hooks](transforms/insert-hooks/README.md)
 * [mocha-to-qunit](transforms/mocha-to-qunit/README.md)
 * [modify-import](transforms/modify-import/README.md)
