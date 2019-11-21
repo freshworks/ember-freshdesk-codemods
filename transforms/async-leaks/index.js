@@ -14,13 +14,7 @@ module.exports = function transformer(file, api) {
   const isImportExists = importRun && importRun.length > 0;
 
   const asyncExpression = root
-    .find(j.CallExpression)
-    .filter(path => {
-      return (
-        path.node.arguments.length === 1 &&
-        path.node.arguments[0].value == "store"
-      );
-    })
+    .find(j.CallExpression, { arguments: [{ value: "store" }] })
     .closest(j.ExpressionStatement)
     .filter(path => {
       // check for existing run loop
