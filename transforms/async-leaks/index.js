@@ -13,7 +13,7 @@ module.exports = function transformer(file, api) {
   });
   const isImportExists = importRun && importRun.length > 0;
 
-  const asyncExpression = root
+  const leakingExpression = root
     .find(j.CallExpression)
     .filter(path => {
       return (
@@ -30,7 +30,7 @@ module.exports = function transformer(file, api) {
       );
     });
 
-  asyncExpression.replaceWith(nodePath => {
+  leakingExpression.replaceWith(nodePath => {
     const { node } = nodePath;
     // wrap with run
     const newNode = j.expressionStatement(
