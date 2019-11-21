@@ -6,7 +6,6 @@ module.exports = function transformer(file, api) {
   const options = getOptions();
   const root = j(file.source);
   let isModified = false;
-
   const importRun = root.find(j.ImportDeclaration, {
     source: {
       value: "@ember/runloop"
@@ -14,7 +13,7 @@ module.exports = function transformer(file, api) {
   });
   const isImportExists = importRun && importRun.length > 0;
 
-  root
+  const asyncExpression = root
     .find(j.CallExpression)
     .filter(path => {
       return (
@@ -23,24 +22,35 @@ module.exports = function transformer(file, api) {
       );
     })
     .closest(j.ExpressionStatement)
-    .replaceWith(nodePath => {
-      const { node } = nodePath;
-      // wrap with run
-      const newNode = j.expressionStatement(
-        j.callExpression(j.identifier("run"), [
-          j.arrowFunctionExpression([], j.blockStatement([node]))
-        ])
+    .filter(path => {
+      // check for existing run loop
+      return (
+        path.parent.parent.parent.node.callee &&
+        path.parent.parent.parent.node.callee.name != "run"
       );
-      isModified = true;
-      return newNode;
     });
+
+  asyncExpression.replaceWith(nodePath => {
+    const { node } = nodePath;
+    // wrap with run
+    const newNode = j.expressionStatement(
+      j.callExpression(j.identifier("run"), [
+        j.arrowFunctionExpression([], j.blockStatement([node]))
+      ])
+    );
+    isModified = true;
+    return newNode;
+  });
 
   if (isModified && !isImportExists) {
     const importStatement = j.importDeclaration(
       [j.importSpecifier(j.identifier("run"), j.identifier("run"))],
       j.literal("@ember/runloop")
     );
-    root.find(j.ImportDeclaration).get().insertAfter(importStatement);
+    root
+      .find(j.ImportDeclaration)
+      .get()
+      .insertAfter(importStatement);
   }
 
   return root.toSource();
