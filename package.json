@@ -1,13 +1,17 @@
 {
   "name": "ember-freshdesk-codemods",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "scripts": {
     "test": "codemod-cli test",
     "update-docs": "codemod-cli update-docs"
   },
   "bin": "./bin/cli.js",
+  "repository": "https://github.com/freshdesk/ember-freshdesk-codemods.git",
+  "license": "MIT",
   "keywords": [
-    "codemod-cli"
+    "codemod",
+    "ember",
+    "freshworks"
   ],
   "dependencies": {
     "codemod-cli": "2.0.0"
