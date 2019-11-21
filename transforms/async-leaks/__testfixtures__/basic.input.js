@@ -4,7 +4,6 @@ import { setupRenderingTest } from 'ember-mocha';
 import { render, findAll } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import contact from 'freshdesk/tests/fixtures/contact';
-import { run } from "@ember/runloop";
 
 describe('Integration | Component | app-components/widgets/email-info', function() {
 

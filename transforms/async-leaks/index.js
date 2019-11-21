@@ -40,7 +40,7 @@ module.exports = function transformer(file, api) {
       [j.importSpecifier(j.identifier("run"), j.identifier("run"))],
       j.literal("@ember/runloop")
     );
-    root.find(j.ImportDeclaration).insertAfter(importStatement);
+    root.find(j.ImportDeclaration).get().insertAfter(importStatement);
   }
 
   return root.toSource();
