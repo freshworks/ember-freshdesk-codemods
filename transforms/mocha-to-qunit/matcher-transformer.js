@@ -52,12 +52,32 @@ module.exports = [{
       hasShouldNot = !hasShouldNot;
     }
 
-    if (hasSelectorWithoutProperty) {
-      return constructDomExists(j, assertArgument, assertMessage, !hasShouldNot, undefined);
-    } else {
+    let fallback = function() {
       var assertMethod = hasShouldNot ? 'notOk' : 'ok';
       return `assert.${assertMethod}(${joinParams(assertArgumentSource, assertMessage)});`;
     }
+
+    try {
+      if (hasSelectorWithoutProperty) {
+        return constructDomExists(j, assertArgument, assertMessage, !hasShouldNot, undefined);
+      } else {
+        return fallback();
+      }
+    } catch {
+      return fallback();
+    }
+  }
+}, {
+  name: 'expected-called',
+  // expect(spy()).to.have.been.called;
+  matcher: function(expression) {
+    return (expression.property && expression.property.name === 'called');
+  },
+  transformer: function (expression, path, j) {
+    var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
+    let selector = `${assertArgumentSource}.called`;
+    let assertArgs = joinParams(selector, !hasShouldNot, assertMessage);
+    return `assert.equal(${assertArgs});`;
   }
 }, {
     name: 'expected-match',
@@ -65,7 +85,7 @@ module.exports = [{
        .to.be.match
        .to.not.match
     */
-    matcher: function (expression) {
+    matcher: function (expression, path, j) {
       let name = (expression.callee && expression.callee.property.name) || '';
       return name === 'match';
     },
@@ -132,9 +152,13 @@ module.exports = [{
 
     var lengthValue = j(expression.arguments[0]).toSource();
 
-    if (hasSelectorWithoutProperty) {
-      return constructDomExists(j, assertArgument, assertMessage, lengthValue != 0, lengthValue);
-    } else {
+    try {
+      if (hasSelectorWithoutProperty) {
+        return constructDomExists(j, assertArgument, assertMessage, lengthValue != 0, lengthValue);
+      } else {
+        return `assert.length(${joinParams(assertArgumentSource, lengthValue, assertMessage)});`;
+      }
+    } catch {
       return `assert.length(${joinParams(assertArgumentSource, lengthValue, assertMessage)});`;
     }
   }
@@ -308,17 +332,37 @@ module.exports = [{
     let assertArgs = (hasShouldNot) ? joinParams(assertArgumentSource, assertMessage) : joinParams(assertArgumentSource, expectedArgument, assertMessage);
     return `assert.${assertMethod}(${assertArgs});`;
   }
-}, {
-  name: 'expected-called',
-  // expect(spy()).to.have.been.called;
-  matcher: function(expression) {
-    return (expression.property && expression.property.name === 'called');
-  },
-  transformer: function (expression, path, j) {
-    var { assertArgumentSource, assertMessage, hasShouldNot } = extractExpect(path, j);
-    let selector = `${assertArgumentSource}.called`;
-    let assertArgs = joinParams(selector, !hasShouldNot, assertMessage);
-    return `assert.equal(${assertArgs});`;
-  }
 }
 ];
+
+/**
+  Special case need to get this back if needed or remove this removeDuplicateImports
+  {
+    // This specific tranform is only applicable for the Freshdesk code base.
+    // We need to remove this when given outside. or have it as part of a seperate transform statement
+    name: 'expected-plain',
+    matcher: function (expression, path, j) {
+      return (expression.callee && expression.callee.name === 'expect');
+    },
+    transformer: function(expression, path, j) {
+      var {
+        assertArguments,
+        assertArgument,
+        assertMessage,
+        assertArgumentSource
+      } = extractExpect(path, j);
+      var assertMethod = '', params = '';
+
+      if (assertArguments.length > 1) {
+        let expectedValue = (assertArguments.length === 3) ? assertArguments[2] : '';
+        assertMethod = 'equal';
+        params = joinParams(assertArgumentSource, j(expectedValue).toSource(), assertMessage);
+      } else {
+        assertMethod = 'ok';
+        params = joinParams(assertArgumentSource);
+      }
+
+      return `assert.${assertMethod}(${params});`;
+    }
+  },
+**/

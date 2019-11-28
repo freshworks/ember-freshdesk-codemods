@@ -71,6 +71,8 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').hasAttribute('aria-label', 'label', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').hasAttribute('disabled');
     assert.dom('[data-test-id=page-title]').hasClass('text--bold');
+    assert.dom(findAll('[data-test-id=page-title]')[1]).hasClass('text--bold');
+
     assert.dom('[data-test-id=page-title]').isDisabled();
     assert.dom('[data-test-id=page-title]').isVisible('Assertion Message');
     assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
@@ -150,6 +152,8 @@ module('Integration | Component', function(hooks) {
     assert.dom('dom-selector').exists();
     assert.dom('dom-selector').exists('message');
     assert.dom('dom-selector').doesNotExist('message');
+    assert.ok(findAll('dom-selector')[0]);
+    assert.notOk(findAll('dom-selector')[0]);
     assert.ok(domSelector);
     assert.notOk(domSelector, 'message');
   });

@@ -78,12 +78,20 @@ function transformHooks(path, name, j, root) {
   let hasHooks = j(path).find(j.VariableDeclaration)
     .filter((path) => j(path).find(j.Identifier, { name }).length !== 0);
 
-  if(hasHooks.length === 0) {
+  let hasHooksAssignment = j(path).find(j.AssignmentExpression)
+    .filter((path) => j(path).find(j.Identifier, { name }).length !== 0);
+
+  if (hasHooks.length > 0) {
+    hasHooks.replaceWith((path) => `${name}(hooks);`);
+  } else if (hasHooksAssignment.length > 0) {
+    hasHooksAssignment.replaceWith((path) => `${name}(hooks)`);
+
+    j(path).find(j.VariableDeclarator, { id: { name: 'hooks' }})
+      .remove();
+  } else {
     j(path).find(j.Identifier, { name })
       .closest(j.Expression)
       .replaceWith((path) => `${name}(hooks)`);
-  } else {
-    hasHooks.replaceWith((path) => `${name}(hooks);`);
   }
 }
 

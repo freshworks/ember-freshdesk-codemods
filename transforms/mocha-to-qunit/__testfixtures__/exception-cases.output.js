@@ -9,6 +9,19 @@ import { run } from '@ember/runloop';
 
 let name = faker.name.firstName();
 
+module('Integration | Component test', function(hooks) {
+  setupTest(hooks);
+
+  // ...
+});
+
+module('Integration | Component test', function(hooks) {
+  let router, route, transitionTo;
+  setupTest(hooks);
+
+  // ...
+});
+
 module('Integration | Component', function(hooks) {
   setupApplicationTest(hooks);
   setupTest(hooks);
@@ -18,6 +31,10 @@ module('Integration | Component', function(hooks) {
 
     hooks.beforeEach(function() {
       // Testing for beforeEach with hooks
+    });
+
+    test('Testing await done', async function(assert) {
+      assert.notEqual(false, true);
     });
 
     test('basic negative expect statements', async function(assert) {
