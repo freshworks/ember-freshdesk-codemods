@@ -16,22 +16,6 @@ const {
   renameImports
 } = require('./utils');
 
-// TODO We need to address the following
-// [ ] Take the list of expects and convert them to qunit asserts.
-// [X] Use hooks from module params and not as return value for setupTests.
-// [ ] Add more fixtures.
-// [ ] Take a sample batch of 50 and migrate them to qunit using some simple code-mods.
-// [X] Refactor to a mapper to determine what type of assertion and what type of transform.
-// [X] Clean up unused imports sych as context, findAll.
-// [X] Migrate context to module and add hooks.
-// [X] If a describe or a context is skipped then all the tests within the specifc module needs to be skipped and added as an import to qunit
-// [ ] Clean up any beforeEach and afterEach called directly form mocha.
-//
-// Known issues
-// [ ] There are some tests which have an expect as the return statements and also having await methods infront of it.
-// [ ] Mocha's done callback needs to be removed if present.
-// [ ] Faker is getting removed from the tests. need to analyse why.
-
 module.exports = function transformer(file, api) {
   const j = getParser(api);
   const options = getOptions();
@@ -147,6 +131,9 @@ module.exports = function transformer(file, api) {
 
   function removeDoneMethod(path) {
     j(path).find(j.Identifier, { name: 'done' })
+      .closest(j.AwaitExpression)
+      .remove();
+    j(path).find(j.Identifier, { name: 'done' })
       .closest(j.CallExpression)
       .remove();
   }
@@ -201,6 +188,10 @@ module.exports = function transformer(file, api) {
     }
   }
 
+  function specialException(expression) {
+    return (expression.callee && expression.callee.name === 'expect')
+  }
+
   function runMacherTranformer(expression, path) {
     var matchedExpression = j(expression).toSource();
     var BreakException = {};
@@ -208,13 +199,21 @@ module.exports = function transformer(file, api) {
     try {
       matcherTransformer
         .forEach(({ name, matcher, transformer }) => {
-          if (matcher(expression, path, j, root)) {
-            matchedExpression = transformer(expression, path, j, root);
+          if (specialException(expression)) {
+            console.log(`
+              You may have test with bad assertions!!!
+              Check if you are having an expect without an assertion
+            `);
+            throw BreakException;
+          } else if (matcher(expression, path, j, root)) {
+            matchedExpression = transformer(expression, path, j, root, BreakException);
             throw BreakException;
           }
         });
     } catch (e) {
-      if (e !== BreakException) throw e;
+      if (e !== BreakException) {
+        throw e;
+      }
     }
 
     return matchedExpression;

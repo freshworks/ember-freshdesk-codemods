@@ -68,6 +68,8 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.have.attribute('aria-label', 'label');
     expect(find('[data-test-id=page-title]')).to.have.attribute('disabled');
     expect(find('[data-test-id=page-title]')).to.have.class('text--bold');
+    expect(findAll('[data-test-id=page-title]')[1]).to.have.class('text--bold');
+
     expect(find('[data-test-id=page-title]')).to.be.disabled;
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.be.visible;
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.have.text('input');
@@ -147,6 +149,8 @@ describe('Integration | Component', function() {
     expect(find('dom-selector')).to.exist;
     expect(find('dom-selector'), 'message').to.exist;
     expect(find('dom-selector'), 'message').to.not.exist;
+    expect(findAll('dom-selector')[0]).to.exist;
+    expect(findAll('dom-selector')[0]).to.not.exist;
     expect(domSelector).to.exist;
     expect(domSelector, 'message').to.not.exist;
   });

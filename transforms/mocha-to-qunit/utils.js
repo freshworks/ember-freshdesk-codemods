@@ -86,6 +86,7 @@ function extractExpect(path, j) {
   return {
     expectPath,
     assertArgument,
+    assertArguments,
     assertArgumentSource,
     hasMessage,
     assertMessage,
@@ -113,7 +114,7 @@ function constructDomExists(j, assertArgument, assertMessage, exists = true, len
 }
 
 function constructDomAssertions(j, assertArgument, assertMessage, assertType, hasShouldNot, expectedArguments = []) {
-  let domSelector = j(assertArgument.arguments || assertArgument.name).toSource();
+  let domSelector = j(assertArgument.arguments || assertArgument.name || assertArgument).toSource();
   let qunitAssertType = getQunitDomAssertType(assertType, hasShouldNot);
   let assertionArguments = [];
   if(expectedArguments.length) {
