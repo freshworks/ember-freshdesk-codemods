@@ -6,6 +6,7 @@ module.exports = function transformer(file, api) {
   const options = getOptions();
   const root = j(file.source);
   let isModified = false;
+  let groupedNodes = [];
   const importRun = root.find(j.ImportDeclaration, {
     source: {
       value: "@ember/runloop"
@@ -24,13 +25,39 @@ module.exports = function transformer(file, api) {
     .closest(j.ExpressionStatement)
     .filter(path => {
       // check for existing run loop
-      return (
-        path.parent.parent.parent.node.callee &&
-        path.parent.parent.parent.node.callee.name != "run"
-      );
+      return path.parent.parent.parent.node.callee && path.parent.parent.parent.node.callee.name != "run";
+    });
+  
+  // GROUP ADJACENT
+  const groupedExp = leakingExpression
+  	.filter((nodePath, index, exp) => {
+      const { node } = nodePath.parent;
+      const prevNode = exp[index-1] ? exp[index-1].parent.node : null;
+      const nextNode = exp[index+1] ? exp[index+1].parent.node : null;
+      return (node.start == (prevNode && prevNode.start) || node.start == (nextNode && nextNode.start));
+    });
+    
+  groupedExp.length && groupedExp.forEach(nodePath => {
+      const { node } = nodePath;
+      groupedNodes.push(node);
+    });
+  
+  const newNodes = j.expressionStatement(
+    j.callExpression(j.identifier("run"), [j.arrowFunctionExpression([], j.blockStatement([...groupedNodes]))])
+  );
+  groupedExp.remove();
+  groupedExp && groupedNodes.length && groupedExp.get().insertAfter(newNodes);
+  
+  // FILTER SOLO
+  const soloExp = leakingExpression
+  	.filter((nodePath, index, exp) => {
+      const { node } = nodePath.parent;
+      const prevNode = exp[index-1] ? exp[index-1].parent.node : null;
+      const nextNode = exp[index+1] ? exp[index+1].parent.node : null;
+      return !(node.start == (prevNode && prevNode.start) || node.start == (nextNode && nextNode.start));
     });
 
-  leakingExpression.replaceWith(nodePath => {
+  soloExp.length && soloExp.replaceWith(nodePath => {
     const { node } = nodePath;
     // wrap with run
     const newNode = j.expressionStatement(

@@ -16,6 +16,7 @@ describe('Integration | Component | app-components/from-email', function() {
 
     run(() => {
       get(this, 'store').pushPayload('contact', { contact: agentContact.attrs  });
+      get(this, 'store').pushPayload('contact', { contact: userContact.attrs  });
     });
   });
 
