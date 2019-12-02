@@ -1,11 +1,13 @@
 function removeUnusedImportSpecifiers(j, root) {
   root.find(j.ImportSpecifier)
     .filter((path) => {
-      let importName = path.node.imported.name;
+      let importName = (path.node.local || path.node.imported).name;
       let identifierPresent = root.find(j.Identifier, {
           name: importName
         })
-        .filter((path) => (path.name !== 'local' && path.name !== 'imported'))
+        .filter((path) => {
+          return (path.name !== 'local' && path.name !== 'imported')
+        })
 
       return (identifierPresent.length === 0);
     }).remove();

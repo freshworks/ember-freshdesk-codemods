@@ -6,11 +6,16 @@ import {
 } from '@freshdesk/test-helpers';
 import { faker } from 'ember-cli-mirage';
 import { run } from '@ember/runloop';
+import {
+  SWITCHER_OPTIONS as switcherOptions
+} from 'freshdesk/constants/automations';
 
 let name = faker.name.firstName();
 
 module('Integration | Component test', function(hooks) {
   setupTest(hooks);
+
+  switcherOptions();
 
   // ...
 });
