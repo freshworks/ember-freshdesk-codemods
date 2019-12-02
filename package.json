@@ -1,5 +1,5 @@
 {
-  "name": @freshworks/"ember-freshdesk-codemods",
+  "name": "@freshworks/ember-freshdesk-codemods",
   "version": "0.3.0",
   "scripts": {
     "test": "codemod-cli test",
