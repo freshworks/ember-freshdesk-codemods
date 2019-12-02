@@ -1,9 +1,11 @@
 {
-  "name": "ember-freshdesk-codemods",
+  "name": "@freshworks/ember-codemods",
   "version": "0.3.0",
   "scripts": {
     "test": "codemod-cli test",
-    "update-docs": "codemod-cli update-docs"
+    "update-docs": "codemod-cli update-docs",
+    "deploy-patch": "npm version patch && git push && git push --tags && npm publish",
+    "deploy-minor": "npm version minor && git push && git push --tags && npm publish"
   },
   "bin": "./bin/cli.js",
   "repository": "https://github.com/freshdesk/ember-freshdesk-codemods.git",
