@@ -1,6 +1,6 @@
 {
   "name": "@freshworks/ember-codemods",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "scripts": {
     "test": "codemod-cli test",
     "update-docs": "codemod-cli update-docs",
