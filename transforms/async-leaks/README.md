@@ -40,6 +40,7 @@ describe('Integration | Component | app-components/from-email', function() {
     server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
 
     get(this, 'store').pushPayload('contact', { contact: agentContact.attrs  });
+    get(this, 'store').pushPayload('contact', { contact: userContact.attrs  });
   });
 
   it('should ignore existing run loop', async function() {
@@ -75,6 +76,7 @@ describe('Integration | Component | app-components/from-email', function() {
 
     run(() => {
       get(this, 'store').pushPayload('contact', { contact: agentContact.attrs  });
+      get(this, 'store').pushPayload('contact', { contact: userContact.attrs  });
     });
   });
 

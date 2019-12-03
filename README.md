@@ -20,9 +20,11 @@ yarn global add @freshworks/ember-codemods
 
 <!--TRANSFORMS_START-->
 * [async-leaks](transforms/async-leaks/README.md)
+* [cleanup-imports](transforms/cleanup-imports/README.md)
 * [insert-hooks](transforms/insert-hooks/README.md)
 * [mocha-to-qunit](transforms/mocha-to-qunit/README.md)
 * [modify-import](transforms/modify-import/README.md)
+* [remove-unused-get-import](transforms/remove-unused-get-import/README.md)
 * [setup-helpers-with-await](transforms/setup-helpers-with-await/README.md)
 <!--TRANSFORMS_END-->
 
