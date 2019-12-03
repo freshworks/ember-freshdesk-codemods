@@ -47,8 +47,12 @@ module.exports = function transformer(file, api) {
 
   renameIdentifiers(renameIdentifierList, root, j);
   renameImports(renameImportImports, root, j);
+
   // transformer for moving it.skip, describe.skip, module.skip => skip and nested children to have skip
   transformSkippedTests(j, root);
+
+  // Remove from beforeEach, afterEach mocha import etc.
+  removeMochaImports(callbackHooks, j, root);
 
   root.find(j.FunctionExpression)
     .filter((path) => path.parent.node.callee && ['test', 'skip'].includes(path.parent.node.callee.name))
@@ -92,6 +96,16 @@ module.exports = function transformer(file, api) {
     if(collection.length > 0) {
       importSkip(root, j, skipName);
     }
+  }
+
+  function removeMochaImports(callbackHooks, j, root) {    
+    callbackHooks.forEach((name) => {
+      root.find(j.ImportSpecifier, {
+        imported: {
+          name
+        }
+      }).remove();
+    });
   }
 
   function importSkip(root, j, name) {
@@ -199,13 +213,14 @@ module.exports = function transformer(file, api) {
     try {
       matcherTransformer
         .forEach(({ name, matcher, transformer }) => {
-          if (specialException(expression)) {
-            console.log(`
-              You may have test with bad assertions!!!
-              Check if you are having an expect without an assertion
-            `);
-            throw BreakException;
-          } else if (matcher(expression, path, j, root)) {
+          // if (specialException(expression)) {
+          //   console.log(`
+          //     You may have test with bad assertions!!!
+          //     Check if you are having an expect without an assertion
+          //   `);
+          //   throw BreakException;
+          // } else
+          if (matcher(expression, path, j, root)) {
             matchedExpression = transformer(expression, path, j, root, BreakException);
             throw BreakException;
           }
