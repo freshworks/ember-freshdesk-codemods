@@ -11,9 +11,7 @@
   "repository": "https://github.com/freshdesk/ember-freshdesk-codemods.git",
   "license": "MIT",
   "keywords": [
-    "codemod",
-    "ember",
-    "freshworks"
+    "codemod-cli"
   ],
   "dependencies": {
     "codemod-cli": "2.0.0"

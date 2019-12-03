@@ -213,14 +213,13 @@ module.exports = function transformer(file, api) {
     try {
       matcherTransformer
         .forEach(({ name, matcher, transformer }) => {
-          // if (specialException(expression)) {
-          //   console.log(`
-          //     You may have test with bad assertions!!!
-          //     Check if you are having an expect without an assertion
-          //   `);
-          //   throw BreakException;
-          // } else
-          if (matcher(expression, path, j, root)) {
+          if (specialException(expression)) {
+            console.log(`
+              You may have test with bad assertions!!!
+              Check if you are having an expect without an assertion
+            `);
+            throw BreakException;
+          } else if (matcher(expression, path, j, root)) {
             matchedExpression = transformer(expression, path, j, root, BreakException);
             throw BreakException;
           }
