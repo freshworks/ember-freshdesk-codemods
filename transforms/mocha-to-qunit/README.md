@@ -17,6 +17,7 @@ ember-freshdesk-codemods mocha-to-qunit path/of/files/ or/some**/*glob.js
 <!--FIXTURES_TOC_START-->
 * [basic](#basic)
 * [exception-cases](#exception-cases)
+* [plain-expect](#plain-expect)
 * [test-describe-skip](#test-describe-skip)
 * [test-skips](#test-skips)
 <!--FIXTURES_TOC_END-->
@@ -97,6 +98,8 @@ describe('Integration | Component', function() {
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.have.attribute('aria-label', 'label');
     expect(find('[data-test-id=page-title]')).to.have.attribute('disabled');
     expect(find('[data-test-id=page-title]')).to.have.class('text--bold');
+    expect(findAll('[data-test-id=page-title]')[1]).to.have.class('text--bold');
+
     expect(find('[data-test-id=page-title]')).to.be.disabled;
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.be.visible;
     expect(find('[data-test-id=page-title]'), 'Assertion Message').to.have.text('input');
@@ -176,6 +179,8 @@ describe('Integration | Component', function() {
     expect(find('dom-selector')).to.exist;
     expect(find('dom-selector'), 'message').to.exist;
     expect(find('dom-selector'), 'message').to.not.exist;
+    expect(findAll('dom-selector')[0]).to.exist;
+    expect(findAll('dom-selector')[0]).to.not.exist;
     expect(domSelector).to.exist;
     expect(domSelector, 'message').to.not.exist;
   });
@@ -307,6 +312,8 @@ module('Integration | Component', function(hooks) {
     assert.dom('[data-test-id=page-title]').hasAttribute('aria-label', 'label', 'Assertion Message');
     assert.dom('[data-test-id=page-title]').hasAttribute('disabled');
     assert.dom('[data-test-id=page-title]').hasClass('text--bold');
+    assert.dom(findAll('[data-test-id=page-title]')[1]).hasClass('text--bold');
+
     assert.dom('[data-test-id=page-title]').isDisabled();
     assert.dom('[data-test-id=page-title]').isVisible('Assertion Message');
     assert.dom('[data-test-id=page-title]').hasText('input', 'Assertion Message');
@@ -386,6 +393,8 @@ module('Integration | Component', function(hooks) {
     assert.dom('dom-selector').exists();
     assert.dom('dom-selector').exists('message');
     assert.dom('dom-selector').doesNotExist('message');
+    assert.ok(findAll('dom-selector')[0]);
+    assert.notOk(findAll('dom-selector')[0]);
     assert.ok(domSelector);
     assert.notOk(domSelector, 'message');
   });
@@ -447,12 +456,31 @@ module('Integration | Component', function(hooks) {
 **Input** (<small>[exception-cases.input.js](transforms/mocha-to-qunit/__testfixtures__/exception-cases.input.js)</small>):
 ```js
 import { expect } from 'chai';
-import { describe, it, context } from 'mocha';
+import { describe, it, context, beforeEach, afterEach } from 'mocha';
 import { setupTest, setupWindowMock, setupApplicationTest } from '@freshdesk/test-helpers';
 import { faker } from 'ember-cli-mirage';
 import { run } from '@ember/runloop';
+import {
+  SWITCHER_OPTIONS as switcherOptions
+} from 'freshdesk/constants/automations';
 
 let name = faker.name.firstName();
+
+describe('Integration | Component test', function() {
+  let hooks;
+  hooks = setupTest();
+
+  switcherOptions();
+
+  // ...
+});
+
+describe('Integration | Component test', function() {
+  let hooks, router, route, transitionTo;
+  hooks = setupTest();
+
+  // ...
+});
 
 describe('Integration | Component', function() {
   let hooks = setupApplicationTest();
@@ -463,6 +491,11 @@ describe('Integration | Component', function() {
 
     beforeEach(function() {
       // Testing for beforeEach with hooks
+    });
+
+    it('Testing await done', async function(done) {
+      expect(false).to.not.be.true;
+      await done();
     });
 
     it('basic negative expect statements', async function() {
@@ -538,8 +571,26 @@ import {
 } from '@freshdesk/test-helpers';
 import { faker } from 'ember-cli-mirage';
 import { run } from '@ember/runloop';
+import {
+  SWITCHER_OPTIONS as switcherOptions
+} from 'freshdesk/constants/automations';
 
 let name = faker.name.firstName();
+
+module('Integration | Component test', function(hooks) {
+  setupTest(hooks);
+
+  switcherOptions();
+
+  // ...
+});
+
+module('Integration | Component test', function(hooks) {
+  let router, route, transitionTo;
+  setupTest(hooks);
+
+  // ...
+});
 
 module('Integration | Component', function(hooks) {
   setupApplicationTest(hooks);
@@ -550,6 +601,10 @@ module('Integration | Component', function(hooks) {
 
     hooks.beforeEach(function() {
       // Testing for beforeEach with hooks
+    });
+
+    test('Testing await done', async function(assert) {
+      assert.notEqual(false, true);
     });
 
     test('basic negative expect statements', async function(assert) {
@@ -606,6 +661,64 @@ module('Integration | Component', function(hooks) {
     });
   });
 });
+
+```
+---
+<a id="plain-expect">**plain-expect**</a>
+
+**Input** (<small>[plain-expect.input.js](transforms/mocha-to-qunit/__testfixtures__/plain-expect.input.js)</small>):
+```js
+it('Method with return expression', function() {
+  expect(currentURL(), 'Url page', '/url/param');
+});
+
+// Input
+// it('Method with return expression', function() {
+//   expect(currentURL(), 'Url page', '/url/param');
+//   expect(find(ref)[0]);
+//   expect(find('#element'));
+//   expect(findAll('.elements').length, 1);
+//   expect('[data-test-id="selector"]'.length, 0);
+//   expect(calledSpy.calledWith(ref));
+// });
+
+// Output
+// test('Method with return expression', function(assert) {
+//   assert.equal(currentURL(), '/url/param', 'Url page');
+//   assert.ok(find(ref)[0]);
+//   assert.ok(find('#element'));
+//   assert.equal(findAll('.elements').length, 1);
+//   assert.equal('[data-test-id="selector"]'.length, 0);
+//   assert.ok(calledSpy.calledWith(ref));
+// });
+
+```
+
+**Output** (<small>[plain-expect.output.js](transforms/mocha-to-qunit/__testfixtures__/plain-expect.output.js)</small>):
+```js
+test('Method with return expression', function(assert) {
+  expect(currentURL(), 'Url page', '/url/param');
+});
+
+// Input
+// it('Method with return expression', function() {
+//   expect(currentURL(), 'Url page', '/url/param');
+//   expect(find(ref)[0]);
+//   expect(find('#element'));
+//   expect(findAll('.elements').length, 1);
+//   expect('[data-test-id="selector"]'.length, 0);
+//   expect(calledSpy.calledWith(ref));
+// });
+
+// Output
+// test('Method with return expression', function(assert) {
+//   assert.equal(currentURL(), '/url/param', 'Url page');
+//   assert.ok(find(ref)[0]);
+//   assert.ok(find('#element'));
+//   assert.equal(findAll('.elements').length, 1);
+//   assert.equal('[data-test-id="selector"]'.length, 0);
+//   assert.ok(calledSpy.calledWith(ref));
+// });
 
 ```
 ---
