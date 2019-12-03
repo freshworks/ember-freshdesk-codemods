@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { describe, it, context, beforeEach, afterEach } from 'mocha';
+import { describe, it, context, beforeEach, afterEach, before, after } from 'mocha';
 import { setupTest, setupWindowMock, setupApplicationTest } from '@freshdesk/test-helpers';
 import { faker } from 'ember-cli-mirage';
 import { run } from '@ember/runloop';
@@ -31,6 +31,10 @@ describe('Integration | Component', function() {
   setupWindowMock(hooks);
 
   context('Context test turns to module', function() {
+
+    before(function() {
+      // Testing for before
+    });
 
     beforeEach(function() {
       // Testing for beforeEach with hooks
@@ -82,6 +86,10 @@ describe('Integration | Component', function() {
 
     afterEach(function() {
       // Testing for afterEach without hooks attribute
+    });
+
+    after(function () {
+      // Testing for after
     });
 
     it('Expect within a nested block', function(done) {

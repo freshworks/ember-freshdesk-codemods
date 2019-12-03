@@ -34,6 +34,10 @@ module('Integration | Component', function(hooks) {
 
   module('Context test turns to module', function(hooks) {
 
+    hooks.before(function() {
+      // Testing for before
+    });
+
     hooks.beforeEach(function() {
       // Testing for beforeEach with hooks
     });
@@ -80,6 +84,10 @@ module('Integration | Component', function(hooks) {
 
     hooks.afterEach(function() {
       // Testing for afterEach without hooks attribute
+    });
+
+    hooks.after(function () {
+      // Testing for after
     });
 
     test('Expect within a nested block', function(assert) {
