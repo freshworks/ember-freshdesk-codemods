@@ -1,6 +1,6 @@
 import { describe } from 'mocha';
 
-import { run } from "@ember/runloop";
+import { run } from '@ember/runloop';
 
 describe('Integration | Component | app-components/from-email', function() {
   
