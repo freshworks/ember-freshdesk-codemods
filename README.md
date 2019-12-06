@@ -13,7 +13,7 @@ npx @freshworks/ember-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.j
 # or
 
 yarn global add @freshworks/ember-codemods
-@freshworks/ember-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
+ember-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 ```
 
 ## Transforms
