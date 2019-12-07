@@ -177,6 +177,8 @@ module('Integration | Component', function(hooks) {
     let currentDateVar = new Date();
     assert.instanceOf(Date, currentDateVar);
     assert.instanceOf(Array, [1, 2]);
+    assert.instanceOf(Blob, blob);
+    assert.instanceOf(File, file);
   });
 
   // DeepIncludes
