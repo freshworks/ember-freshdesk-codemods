@@ -174,6 +174,8 @@ describe('Integration | Component', function() {
     let currentDateVar = new Date();
     expect(currentDateVar).to.be.a('date');
     expect([1, 2]).to.be.an.instanceof(Array);
+    expect(blob).to.be.an.instanceof(Blob);
+    expect(file).to.be.an.instanceof(File);
   });
 
   // DeepIncludes

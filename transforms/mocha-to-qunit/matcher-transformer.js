@@ -298,6 +298,12 @@ module.exports = [{
       case 'date':
         assertArgumentType = `Date`;
         break;
+      case 'blob':
+        assertArgumentType = `Blob`;
+        break;
+      case 'file':
+        assertArgumentType = `File`;
+        break;
       case 'object':
         assertArgumentType = `Object`;
         break;
