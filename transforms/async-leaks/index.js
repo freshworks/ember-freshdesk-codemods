@@ -1,3 +1,6 @@
+// Playground
+// https://astexplorer.net/#/gist/14fcdd3995a9cff790583574ec116850/6e5c25c53c0f0b921de0a171743bbf18a55eb5e3
+
 const { getParser } = require("codemod-cli").jscodeshift;
 const { getOptions } = require("codemod-cli");
 const beautifyImports = require("../beautify-imports");
@@ -14,71 +17,36 @@ module.exports = function transformer(file, api) {
     }
   });
   const isImportExists = importRun && importRun.length > 0;
-
-  const isRunLoop = function (path) {
-    return (path.value.expression &&
-      path.value.expression.callee &&
-      path.value.expression.callee.name == 'run');
-  };
-
-  const isStoreExpressionInsideRunOrDescribe = function (path) {
-    return (
-      path.parent &&
-      path.parent.parent &&
-      path.parent.parent.parent.node.callee 
-      && !["run", "describe"].includes(path.parent.parent.parent.node.callee.name))
-  }
-
-  const storeExpressionsNotInRunLoop = firstRoot
-    .find(j.CallExpression)
-    .filter(path => {
-      return (
-        path.node.arguments.length &&
-        path.node.arguments.some(n => n.value == "store")
-      );
+  const storeFunctions = ['createRecord', 'findRecord', 'findAll', 'pushPayload', 'query', 'queryRecord'];
+  
+  storeFunctions.forEach((storeFunctionName) => {
+    firstRoot.find(j.CallExpression, {
+      callee: {
+        property: {
+          name: storeFunctionName
+        }
+      }
     })
     .closest(j.ExpressionStatement)
     .filter(path => {
-      if (isRunLoop(path) || (j(path).find(j.AwaitExpression).length > 0)) {
+      if (isRunLoop(path)) {
         return false;
       }
       return isStoreExpressionInsideRunOrDescribe(path);
-    });
+    })
+    .replaceWith(wrapAsyncRunLoop);
 
-  storeExpressionsNotInRunLoop.length && storeExpressionsNotInRunLoop.replaceWith(nodePath => {
-    const { node } = nodePath;
-    // wrap with run
-    const newNode = j.expressionStatement(
-      j.callExpression(j.identifier("run"), [
-        j.arrowFunctionExpression([], j.blockStatement([node]))
-      ])
-    );
-    isModified = true;
-    return newNode;
-  });
-
-  const storeDeclarationsNotInRunLoop = firstRoot
-    .find(j.CallExpression)
-    .filter(path => {
-      return (
-        path.node.arguments.length &&
-        path.node.arguments.some(n => n.value == "store")
-      );
+    firstRoot.find(j.CallExpression, {
+      callee: {
+        property: {
+          name: storeFunctionName
+        }
+      }
     })
     .closest(j.VariableDeclaration)
-    .filter((path) => {
-      let isAwaitExpression = j(path).find(j.AwaitExpression).length > 0;
-      return isStoreExpressionInsideRunOrDescribe(path) && !isAwaitExpression;
-    });
-
-  storeDeclarationsNotInRunLoop.length && storeDeclarationsNotInRunLoop.replaceWith(nodePath => {
-    const { node } = nodePath;
-    const newNode = j.expressionStatement(
-      j.callExpression(j.identifier("run"), [
-        j.arrowFunctionExpression([], j.blockStatement([node]))
-      ])
-    );
-    return newNode;
+    .filter(isStoreExpressionInsideRunOrDescribe)
+    .replaceWith(wrapAsyncRunLoop);
+    
   });
 
   // From this phase we will be combining consecutive 
@@ -89,7 +57,7 @@ module.exports = function transformer(file, api) {
     callee: {
       name: "run"
     }
-  }).closest(j.BlockStatement);
+  }).closest(j.BlockStatement)
 
   blocksHavingRunLoopExpressions.forEach((nodePath) => {
     let { node } = nodePath;
@@ -100,7 +68,8 @@ module.exports = function transformer(file, api) {
     node.body.forEach((statement) => {
       if (statement.expression &&
         statement.expression.callee &&
-        statement.expression.callee.name === 'run') {
+        statement.expression.callee.name === 'run'
+        ) {
         exArr.push(true);
       } else {
         exArr.push(false);
@@ -138,7 +107,6 @@ module.exports = function transformer(file, api) {
             delete node.body[key];
           }
         })
-        isModified = true;
       }
       batcher = [];
     }
@@ -146,21 +114,73 @@ module.exports = function transformer(file, api) {
     return node;
   });
 
+  // After this phase we will be bring the variable declarations 
+  // present inside the run loop to the outer block scope
+  let thirdRoot = j(secondRoot.toSource()); 
 
+  thirdRoot.find(j.CallExpression, {
+    callee: {
+      name: "run"
+    },
+    arguments: [
+      { async: true }
+    ]
+  })
+  .find(j.VariableDeclaration)
+  .forEach((nodePath) => {
+    let { node } = nodePath;
+    let declarationType = nodePath.node.kind;
+    let declaration = j(nodePath).find(j.VariableDeclarator).get().node;
+    let newDeclaration = j.variableDeclaration(declarationType, [j.variableDeclarator(j.identifier(declaration.id.name), null)]);
+    let variableName = declaration.id.name;
 
+    j(nodePath).closest(j.ExpressionStatement).get().insertBefore(newDeclaration);
+    j(nodePath).replaceWith(j.expressionStatement(
+      j.assignmentExpression("=", j.identifier(variableName), declaration.init)
+    ));
+  });
+
+  // Add run loop import declaration if required
   if (isModified && !isImportExists) {
     const importStatement = j.importDeclaration(
       [j.importSpecifier(j.identifier("run"), j.identifier("run"))],
       j.literal("@ember/runloop")
     );
-    secondRoot
-      .find(j.ImportDeclaration)
+    thirdRoot.find(j.ImportDeclaration)
       .get()
       .insertAfter(importStatement);
   }
 
+  function isRunLoop(path){
+    return (path.value.expression &&
+      path.value.expression.callee &&
+      path.value.expression.callee.name == 'run');
+  }
+
+  function wrapAsyncRunLoop(nodePath) {
+    const { node } = nodePath;
+    // wrap with async run
+    const arrow = j.arrowFunctionExpression([], j.blockStatement([node]));
+    arrow.async = true;
+    const newNode = j.expressionStatement(
+      j.callExpression(j.identifier("run"), [
+        arrow
+      ])
+    );
+    isModified = true;
+    return newNode;
+  }
+
+  function isStoreExpressionInsideRunOrDescribe(path){
+    return (
+      path.parent &&
+      path.parent.parent &&
+      path.parent.parent.parent.node.callee
+      && !["run", "describe"].includes(path.parent.parent.parent.node.callee.name))
+  }
+
   return beautifyImports(
-    secondRoot.toSource({
+    thirdRoot.toSource({
       quote: 'single',
       lineTerminator,
       trailingComma: false

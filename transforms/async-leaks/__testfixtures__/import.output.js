@@ -6,7 +6,7 @@ describe('Integration | Component | app-components/from-email', function() {
   
   hooks.beforeEach(function() {
     this.store = this.owner.lookup('service:store');
-    run(() => {
+    run(async () => {
       this.get('store').createRecord('contact', contact);
     });
   });
