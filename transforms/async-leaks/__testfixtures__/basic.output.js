@@ -17,20 +17,20 @@ describe('Integration | Component | app-components/from-email', function() {
 
   it('should add run loop', function() {
     run(() => {
+      get(this, 'store').pushPayload('contact', { contact: userContact.attrs });
+      const test = get(this, 'store').findAll('agents');
       get(this, 'store').findAll('tickets');
     });
+
     server.createList('email-config', 20);
     server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
-    run(() => {
-      get(this, 'store').pushPayload('contact', { contact: userContact.attrs });
-      get(this, 'store').findAll('agents');
-    });
   });
 
   it('should ignore existing run loop', async function() {
     server.createList('email-config', 101);
     server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
-
+    const tickets = await get(this, 'store').findAll('tickets');
+    await get(this, 'store').findAll('tickets');
     await run(() => {
       this.get('store').pushPayload('agent', agents);
     });

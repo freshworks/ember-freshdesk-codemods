@@ -15,6 +15,20 @@ module.exports = function transformer(file, api) {
   });
   const isImportExists = importRun && importRun.length > 0;
 
+  const isRunLoop = function (path) {
+    return (path.value.expression &&
+      path.value.expression.callee &&
+      path.value.expression.callee.name == 'run');
+  };
+
+  const isStoreExpressionInsideRunOrDescribe = function (path) {
+    return (
+      path.parent &&
+      path.parent.parent &&
+      path.parent.parent.parent.node.callee 
+      && !["run", "describe"].includes(path.parent.parent.parent.node.callee.name))
+  }
+
   const storeExpressionsNotInRunLoop = firstRoot
     .find(j.CallExpression)
     .filter(path => {
@@ -25,8 +39,10 @@ module.exports = function transformer(file, api) {
     })
     .closest(j.ExpressionStatement)
     .filter(path => {
-      // check for existing run loop
-      return (path.parent.parent.parent.node.callee && !["run", "describe"].includes(path.parent.parent.parent.node.callee.name));
+      if (isRunLoop(path) || (j(path).find(j.AwaitExpression).length > 0)) {
+        return false;
+      }
+      return isStoreExpressionInsideRunOrDescribe(path);
     });
 
   storeExpressionsNotInRunLoop.length && storeExpressionsNotInRunLoop.replaceWith(nodePath => {
@@ -50,10 +66,10 @@ module.exports = function transformer(file, api) {
       );
     })
     .closest(j.VariableDeclaration)
-    .filter(path => {
-      // check for existing run loop    
-      return (path.parent.parent.parent.node.callee && !["run", "describe"].includes(path.parent.parent.parent.node.callee.name));
-    });;
+    .filter((path) => {
+      let isAwaitExpression = j(path).find(j.AwaitExpression).length > 0;
+      return isStoreExpressionInsideRunOrDescribe(path) && !isAwaitExpression;
+    });
 
   storeDeclarationsNotInRunLoop.length && storeDeclarationsNotInRunLoop.replaceWith(nodePath => {
     const { node } = nodePath;
