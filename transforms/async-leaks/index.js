@@ -1,5 +1,5 @@
 // Playground
-// https://astexplorer.net/#/gist/14fcdd3995a9cff790583574ec116850/6e5c25c53c0f0b921de0a171743bbf18a55eb5e3
+// https://astexplorer.net/#/gist/7d31179fdf8c0ca4c34c2e1a453c5c18/73608ccb69d86c3ca5f131a60648bb629e58ed7f
 
 const { getParser } = require("codemod-cli").jscodeshift;
 const { getOptions } = require("codemod-cli");
@@ -34,7 +34,7 @@ module.exports = function transformer(file, api) {
       }
       return isStoreExpressionInsideRunOrDescribe(path);
     })
-    .replaceWith(wrapAsyncRunLoop);
+    .replaceWith(wrapRunLoop);
 
     firstRoot.find(j.CallExpression, {
       callee: {
@@ -45,7 +45,7 @@ module.exports = function transformer(file, api) {
     })
     .closest(j.VariableDeclaration)
     .filter(isStoreExpressionInsideRunOrDescribe)
-    .replaceWith(wrapAsyncRunLoop);
+    .replaceWith(wrapRunLoop);
     
   });
 
@@ -101,6 +101,13 @@ module.exports = function transformer(file, api) {
         });
 
         mainBlock.body = newNodes;
+        // Use async in run loop, when await expressions are found while combining run loops
+        if (hasAwaitExpression(cNodes[0])) {
+          let runLoopArrowExpression = j(cNodes[0]).find(j.ArrowFunctionExpression);
+          if (runLoopArrowExpression.length > 0) {
+            runLoopArrowExpression.get().node.async = true;
+          }
+        }
 
         batcher.forEach((key, index) => {
           if (index !== 0) {
@@ -121,10 +128,7 @@ module.exports = function transformer(file, api) {
   thirdRoot.find(j.CallExpression, {
     callee: {
       name: "run"
-    },
-    arguments: [
-      { async: true }
-    ]
+    }
   })
   .find(j.VariableDeclaration)
   .forEach((nodePath) => {
@@ -157,11 +161,13 @@ module.exports = function transformer(file, api) {
       path.value.expression.callee.name == 'run');
   }
 
-  function wrapAsyncRunLoop(nodePath) {
+  function wrapRunLoop(nodePath) {
     const { node } = nodePath;
-    // wrap with async run
+    // wrap with run
     const arrow = j.arrowFunctionExpression([], j.blockStatement([node]));
-    arrow.async = true;
+    if (hasAwaitExpression(nodePath)) {
+      arrow.async = true;
+    }
     const newNode = j.expressionStatement(
       j.callExpression(j.identifier("run"), [
         arrow
@@ -177,6 +183,10 @@ module.exports = function transformer(file, api) {
       path.parent.parent &&
       path.parent.parent.parent.node.callee
       && !["run", "describe"].includes(path.parent.parent.parent.node.callee.name))
+  }
+
+  function hasAwaitExpression(path) {
+    return (j(path).find(j.AwaitExpression).length > 0);
   }
 
   return beautifyImports(

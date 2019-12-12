@@ -21,6 +21,9 @@ describe('Integration | Component | app-components/from-email', function() {
     server.createList('email-config', 20);
     server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
     this.get('store').findRecord('modals');
+    run(async () => {
+      await get(this, 'store').findAll('agents');
+    });    
   });
 
   it('Should not disturb the following store operations and the operations which are already has run loop', async function() {
