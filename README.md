@@ -1,5 +1,8 @@
 # @freshworks/ember-codemods
 
+![npm (scoped)](https://img.shields.io/npm/v/@freshworks/ember-codemods)
+![](https://github.com/freshdesk/ember-freshdesk-codemods/workflows/Node%20CI/badge.svg)
+
 
 A collection of codemods by Freshworks.
 
