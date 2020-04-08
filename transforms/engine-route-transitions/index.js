@@ -13,9 +13,11 @@ module.exports = function transformer(file, api) {
       }
     })
     .forEach(path => {
-      let oldName = path.value.arguments[0].value;
-      let newName = oldName.replace(/helpdesk\.\w+\./,'');
-      path.value.arguments[0].value = newName;
+      if(['Literal', 'StringLiteral'].includes(path.value.arguments[0].type)) {
+	let oldName = path.value.arguments[0].value;
+	let newName = oldName.replace(/helpdesk\.\w+\./,'');
+	path.value.arguments[0].value = newName;
+      }
     })
     .toSource({quote: 'single'});
 
