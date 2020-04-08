@@ -26,6 +26,8 @@ yarn global add @freshworks/ember-codemods
 ```js
 this.transitionTo('helpdesk.dashboards.default');
 this.transitionTo('helpdesk.admin.index');
+this.transitionTo(url);
+this.transitionTo('helpdesk.agents.show', id);
 
 ```
 
@@ -33,6 +35,8 @@ this.transitionTo('helpdesk.admin.index');
 ```js
 this.transitionTo('default');
 this.transitionTo('index');
+this.transitionTo(url);
+this.transitionTo('show', id);
 
 ```
 <!--FIXTURES_CONTENT_END-->
