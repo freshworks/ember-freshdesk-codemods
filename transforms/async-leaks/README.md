@@ -15,83 +15,11 @@ ember-freshdesk-codemods async-leaks path/of/files/ or/some**/*glob.js
 ## Input / Output
 
 <!--FIXTURES_TOC_START-->
-* [basic](#basic)
 * [import](#import)
+* [runloop-grouping](#runloop-grouping)
 <!--FIXTURES_TOC_END-->
 
 <!--FIXTURES_CONTENT_START-->
----
-<a id="basic">**basic**</a>
-
-**Input** (<small>[basic.input.js](transforms/async-leaks/__testfixtures__/basic.input.js)</small>):
-```js
-import { run } from '@ember/runloop';
-import { describe, it } from 'mocha';
-
-describe('Integration | Component | app-components/from-email', function() {
-  
-  hooks.beforeEach(function() {
-    this.store = this.owner.lookup('service:store');
-    this.get('store').createRecord('contact', contact);
-  });
-
-  it('should add run loop', async function() {
-    server.createList('email-config', 20);
-    server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
-
-    get(this, 'store').pushPayload('contact', { contact: agentContact.attrs  });
-    get(this, 'store').pushPayload('contact', { contact: userContact.attrs  });
-  });
-
-  it('should ignore existing run loop', async function() {
-    server.createList('email-config', 101);
-    server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
-
-    await run(() => {
-      this.get('store').pushPayload('agent', agents);
-    });
-  });
-
-});
-
-```
-
-**Output** (<small>[basic.output.js](transforms/async-leaks/__testfixtures__/basic.output.js)</small>):
-```js
-import { run } from '@ember/runloop';
-import { describe, it } from 'mocha';
-
-describe('Integration | Component | app-components/from-email', function() {
-  
-  hooks.beforeEach(function() {
-    this.store = this.owner.lookup('service:store');
-    run(() => {
-      this.get('store').createRecord('contact', contact);
-    });
-  });
-
-  it('should add run loop', async function() {
-    server.createList('email-config', 20);
-    server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
-
-    run(() => {
-      get(this, 'store').pushPayload('contact', { contact: agentContact.attrs  });
-      get(this, 'store').pushPayload('contact', { contact: userContact.attrs  });
-    });
-  });
-
-  it('should ignore existing run loop', async function() {
-    server.createList('email-config', 101);
-    server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
-
-    await run(() => {
-      this.get('store').pushPayload('agent', agents);
-    });
-  });
-
-});
-
-```
 ---
 <a id="import">**import**</a>
 
@@ -114,7 +42,7 @@ describe('Integration | Component | app-components/from-email', function() {
 ```js
 import { describe } from 'mocha';
 
-import { run } from "@ember/runloop";
+import { run } from '@ember/runloop';
 
 describe('Integration | Component | app-components/from-email', function() {
   
@@ -122,6 +50,112 @@ describe('Integration | Component | app-components/from-email', function() {
     this.store = this.owner.lookup('service:store');
     run(() => {
       this.get('store').createRecord('contact', contact);
+    });
+  });
+
+});
+
+```
+---
+<a id="runloop-grouping">**runloop-grouping**</a>
+
+**Input** (<small>[runloop-grouping.input.js](transforms/async-leaks/__testfixtures__/runloop-grouping.input.js)</small>):
+```js
+import { describe, it } from 'mocha';
+
+describe('Integration | Component | app-components/from-email', function() {
+  
+  hooks.beforeEach(function() {
+    this.store = this.owner.lookup('service:store');
+    this.get('store').createRecord('contact', contact); // comments
+    let ticketsCount = 1;
+    this.get('store').createRecord('ticket', ticket);
+    this.get('store').createRecord('agent', agent);
+  });
+
+  it('should group run loops and bring their variable declarations to correct block scope', function() {
+    get(this, 'store').pushPayload('contact', { contact: userContact.attrs });
+    const test = get(this, 'store').findAll('agents');    
+    this.store.findAll('tickets');
+    run(async () => {
+      await this.get('store').pushPayload('agent', agents);
+      const agent = this.get('store').pushPayload('agent', agents);
+    });
+    server.createList('email-config', 20);
+    server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
+    this.get('store').findRecord('modals');
+    run(async () => {
+      await get(this, 'store').findAll('agents');
+    });    
+  });
+
+  it('Should not disturb the following store operations and the operations which are already has run loop', async function() {
+    run(() => {
+      get(this, 'store').findAll('todos');
+    });
+    server.createList('email-config', 101);
+    server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
+    get(this, 'store').peekAll('tickets');
+    get(this, 'store').peekRecord('ticket');
+    await run(() => {
+      this.get('store').pushPayload('agent', agents);
+    });
+  });
+
+});
+
+```
+
+**Output** (<small>[runloop-grouping.output.js](transforms/async-leaks/__testfixtures__/runloop-grouping.output.js)</small>):
+```js
+import { describe, it } from 'mocha';
+
+import { run } from '@ember/runloop';
+
+describe('Integration | Component | app-components/from-email', function() {
+  
+  hooks.beforeEach(function() {
+    this.store = this.owner.lookup('service:store');
+    run(() => {
+      this.get('store').createRecord('contact', contact); // comments
+    });
+    let ticketsCount = 1;
+    run(() => {
+      this.get('store').createRecord('ticket', ticket);
+      this.get('store').createRecord('agent', agent);
+    });
+  });
+
+  it('should group run loops and bring their variable declarations to correct block scope', function() {
+    const test;
+    const agent;
+    run(async () => {
+      get(this, 'store').pushPayload('contact', { contact: userContact.attrs });
+      test = get(this, 'store').findAll('agents');
+      this.store.findAll('tickets');
+      await this.get('store').pushPayload('agent', agents);
+      agent = this.get('store').pushPayload('agent', agents);
+    });
+
+    server.createList('email-config', 20);
+    server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
+
+    run(async () => {
+      this.get('store').findRecord('modals');
+      await get(this, 'store').findAll('agents');
+    });
+  });
+
+  it('Should not disturb the following store operations and the operations which are already has run loop', async function() {
+    run(() => {
+      get(this, 'store').findAll('todos');
+    });
+    server.createList('email-config', 101);
+    server.create('email-config', { name: 'Test', reply_email: 'test@gmail.com' });
+    get(this, 'store').peekAll('tickets');
+    get(this, 'store').peekRecord('ticket');
+    await run(() => {
+      this.get('store').pushPayload('agent', agents);
     });
   });
 

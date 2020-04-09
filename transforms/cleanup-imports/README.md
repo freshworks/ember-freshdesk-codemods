@@ -25,7 +25,7 @@ yarn global add @freshworks/ember-codemods
 **Input** (<small>[basic.input.js](transforms/cleanup-imports/__testfixtures__/basic.input.js)</small>):
 ```js
 import { expect } from 'chai';
-import { describe, it, context, beforeEach, afterEach } from 'mocha';
+import { describe, it, context, beforeEach, afterEach, before, after } from 'mocha';
 import { setupTest, setupWindowMock, setupApplicationTest } from '@freshdesk/test-helpers';
 import { faker } from 'ember-cli-mirage';
 import { run } from '@ember/runloop';

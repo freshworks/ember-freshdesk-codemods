@@ -204,6 +204,8 @@ describe('Integration | Component', function() {
     let currentDateVar = new Date();
     expect(currentDateVar).to.be.a('date');
     expect([1, 2]).to.be.an.instanceof(Array);
+    expect(blob).to.be.an.instanceof(Blob);
+    expect(file).to.be.an.instanceof(File);
   });
 
   // DeepIncludes
@@ -418,6 +420,8 @@ module('Integration | Component', function(hooks) {
     let currentDateVar = new Date();
     assert.instanceOf(Date, currentDateVar);
     assert.instanceOf(Array, [1, 2]);
+    assert.instanceOf(Blob, blob);
+    assert.instanceOf(File, file);
   });
 
   // DeepIncludes
@@ -456,7 +460,7 @@ module('Integration | Component', function(hooks) {
 **Input** (<small>[exception-cases.input.js](transforms/mocha-to-qunit/__testfixtures__/exception-cases.input.js)</small>):
 ```js
 import { expect } from 'chai';
-import { describe, it, context, beforeEach, afterEach } from 'mocha';
+import { describe, it, context, beforeEach, afterEach, before, after } from 'mocha';
 import { setupTest, setupWindowMock, setupApplicationTest } from '@freshdesk/test-helpers';
 import { faker } from 'ember-cli-mirage';
 import { run } from '@ember/runloop';
@@ -488,6 +492,10 @@ describe('Integration | Component', function() {
   setupWindowMock(hooks);
 
   context('Context test turns to module', function() {
+
+    before(function() {
+      // Testing for before
+    });
 
     beforeEach(function() {
       // Testing for beforeEach with hooks
@@ -539,6 +547,10 @@ describe('Integration | Component', function() {
 
     afterEach(function() {
       // Testing for afterEach without hooks attribute
+    });
+
+    after(function () {
+      // Testing for after
     });
 
     it('Expect within a nested block', function(done) {
@@ -599,6 +611,10 @@ module('Integration | Component', function(hooks) {
 
   module('Context test turns to module', function(hooks) {
 
+    hooks.before(function() {
+      // Testing for before
+    });
+
     hooks.beforeEach(function() {
       // Testing for beforeEach with hooks
     });
@@ -645,6 +661,10 @@ module('Integration | Component', function(hooks) {
 
     hooks.afterEach(function() {
       // Testing for afterEach without hooks attribute
+    });
+
+    hooks.after(function () {
+      // Testing for after
     });
 
     test('Expect within a nested block', function(assert) {
