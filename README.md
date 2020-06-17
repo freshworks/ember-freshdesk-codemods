@@ -22,6 +22,7 @@ ember-codemods <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 ## Transforms
 
 <!--TRANSFORMS_START-->
+* [add-layout](transforms/add-layout/README.md)
 * [async-leaks](transforms/async-leaks/README.md)
 * [cleanup-imports](transforms/cleanup-imports/README.md)
 * [engine-route-transitions](transforms/engine-route-transitions/README.md)
